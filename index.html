@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment System Pro - Padiyathalawa</title>
     <style>
-        /* මූලික සැකසුම් */
         body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
         .no-print-area { background: #90caf9; padding: 20px; text-align: center; }
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -18,34 +17,28 @@
         .print-btn { background: #9b59b6; grid-column: span 3; margin-top: 10px; }
         #login-area { text-align: center; } #system-area { display: none; }
 
-        /* --- මුද්‍රණ වාර්තාවේ ස්ටයිල් (Report Styles) --- */
+        /* Report Styles */
         #report-area { display: none; background: white; width: 210mm; min-height: 297mm; margin: auto; padding: 15mm; box-sizing: border-box; }
         .bold { font-weight: bold; }
-        
-        /* ඉහළ කොටස පෙළගැස්වීම */
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
         .header-left { flex-basis: 50%; margin-top: 3.5em; text-align: left; }
         .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
-        
         .amunuma-container { text-align: right; width: 100%; margin-bottom: 20px; }
         .amunuma { font-size: 14px; font-weight: bold; margin: 0; }
         .samurdhi-details-right p, .manager-details-left p { margin: 0; padding: 0; line-height: 1.2; }
-        
         .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 15px 0; }
-        
         .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
-        .data-table td, .investment-table td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; overflow: hidden; }
+        .data-table td, .investment-table td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
         .data-table td:first-child, .investment-table td:first-child { width: 65%; }
         .data-table td:nth-child(2), .investment-table td:nth-child(2) { width: 35%; text-align: right; font-family: 'Courier New', monospace; font-weight: bold; }
 
-        /* අත්සන් කොටස ඉහළ දකුණු කොටසට සමානව පෙළගැස්වීම */
+        /* අත්සන් පේළි පෙළගැස්ම */
         .signature-section { display: flex; justify-content: space-between; margin-top: 40px; align-items: flex-start; width: 100%; }
         .sig-box-left { flex-basis: 50%; text-align: left; }
         .sig-box-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
-        .sig-content { width: fit-content; } /* අන්තර්ගතයේ පළලට අනුව සීමා කිරීමට */
+        .sig-content { width: fit-content; }
         .sig-box-right p, .sig-box-left p { margin: 3px 0; }
 
-        /* මුද්‍රණ සැකසුම් */
         @media print {
             @page { size: A4; margin: 0; }
             body { background: none; }
@@ -100,22 +93,18 @@
         <button class="add" onclick="process('addData')">Add</button>
         <button class="edit" onclick="process('editData')">Edit</button>
         <button class="delete" onclick="process('deleteData')">Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print Report</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button>
     </div>
 </div>
 
 <div id="report-area">
     <div class="header-container">
         <div class="header-left">
-            <div class="manager-details-left">
-                <p>කළමනාකරු,<br>සමෘද්ධි බැංකුව,<br>පදියතලාව.</p>
-            </div>
+            <p>කළමනාකරු,<br>සමෘද්ධි බැංකුව,<br>පදියතලාව.</p>
         </div>
         <div class="header-right">
             <div class="amunuma-container"><h5 class="amunuma">ඇමුණුම 4</h5></div>
-            <div class="samurdhi-details-right">
-                <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span></p>
-            </div>
+            <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span></p>
         </div>
     </div>
 
@@ -179,7 +168,12 @@
         });
     }
 
-    function generateReport() {
+    // දත්ත Save කර මුද්‍රණය කිරීම
+    async function generateReport() {
+        // මුලින්ම Google Sheet එකට Save කිරීම
+        await process('addData');
+
+        // වාර්තාව පිරවීම
         document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
@@ -205,8 +199,11 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
-        if(actionName === 'searchData') { params.append('colD', document.getElementById('searchId').value); }
-        else { fields.forEach(f => params.append(f, document.getElementById(f).value)); }
+        if(actionName === 'searchData') { 
+            params.append('colD', document.getElementById('searchId').value); 
+        } else { 
+            fields.forEach(f => params.append(f, document.getElementById(f).value)); 
+        }
         params.append('action', actionName);
 
         try {
@@ -216,18 +213,25 @@
                 let data = JSON.parse(text);
                 fields.forEach((f, i) => {
                     let element = document.getElementById(f);
-                    if((i === 2 || i === 6) && data[i]) { element.value = new Date(data[i]).toISOString().split('T')[0]; } 
-                    else if (f === 'colH' && data[i]) {
+                    if((i === 2 || i === 6) && data[i]) {
+                        element.value = new Date(data[i]).toISOString().split('T')[0];
+                    } else if (f === 'colH' && data[i]) {
                         let val = parseFloat(data[i]);
                         element.value = (val < 1) ? (val * 100).toFixed(2) + "%" : data[i];
+                    } else {
+                        element.value = data[i] || "";
                     }
-                    else { element.value = data[i] || ""; }
                 });
             } catch(e) { 
-                if(text.includes("success")) { alert("සාර්ථකයි!"); if(actionName !== 'searchData') location.reload(); }
-                else alert(text); 
+                if(text.includes("success")) { 
+                    alert("සාර්ථකයි!"); 
+                    // මෙහි reload() ඉවත් කර ඇති නිසා Login පිටුවට නොයයි.
+                    if(actionName !== 'searchData' && actionName !== 'addData') {
+                        fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
+                    }
+                } else { alert(text); }
             }
-        } catch(err) { alert("Error: " + err); }
+        } catch(err) { console.error("Error:", err); }
     }
 </script>
 </body>
