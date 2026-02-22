@@ -11,7 +11,6 @@
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
-        /* Search Box Style */
         .search-container { background: #fffde7; padding: 15px; border: 1px solid #fbc02d; border-radius: 8px; margin-bottom: 20px; }
         
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
@@ -21,7 +20,6 @@
         .edit { background: #3498db; } .delete { background: #e74c3c; }
         
         #login-area { text-align: center; } #system-area { display: none; }
-        .auto-calc { color: #d32f2f; font-size: 12px; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -88,13 +86,13 @@
     </select>
     
     <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
-    <input type="text" id="colH">
+    <input type="text" id="colH" placeholder="Ex: 7" onblur="addPercentSymbol(this)">
     
-    <label>ආයෝජනය සඳහා ලද පොලිය:</label>
-    <input type="text" id="colH">
+    <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label>
+    <input type="text" id="colI">
 
     <label>චෙක්පත් අංකය:</label>
-    <input type="text" id="colI">
+    <input type="text" id="colJ">
 
     <div class="btn-grid">
         <button class="add" onclick="process('addData')">Data Add</button>
@@ -119,6 +117,14 @@
         });
     }
 
+    
+    function addPercentSymbol(input) {
+        let val = input.value.trim();
+        if (val !== "" && !isNaN(val)) {
+            input.value = val + "%";
+        }
+    }
+
     function calculateDuration() {
         let startDate = new Date(document.getElementById('colC').value);
         let endDate = new Date(document.getElementById('colG').value);
@@ -141,7 +147,8 @@
     }
 
     async function process(actionName) {
-        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI'];
+        // අලුත් fields අනුපිළිවෙල: A සිට J දක්වා
+        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
         
         if(actionName === 'searchData') {
@@ -164,13 +171,11 @@
                     fields.forEach((f, i) => {
                         let element = document.getElementById(f);
                         if((i === 2 || i === 6) && data[i]) {
-                            // Date formatting for input type="date"
                             let dateVal = new Date(data[i]);
                             if (!isNaN(dateVal)) {
                                 element.value = dateVal.toISOString().split('T')[0];
                             }
                         } else {
-                            // If data is empty, set value to "" to show placeholder
                             element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
                         }
                     });
@@ -188,15 +193,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
