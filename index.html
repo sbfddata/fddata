@@ -86,15 +86,21 @@
     </select>
 
     <label>ආයෝජන කළ දිනය:</label>
-    <input type="date" id="colC">
+    <input type="date" id="colC" onchange="calculateDuration()">
     <label>ආයෝජන රිසිට්පත් අංකය:</label>
     <input type="text" id="colD">
     <label>ආයෝජන මුදල (රු):</label>
-    <input type="number" id="colE">
-    <label>ආයෝජන කාලය (මාස):</label>
-    <input type="text" id="colF">
+    <input type="number" id="colE">    
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
-    <input type="date" id="colG">
+    <input type="date" id="colG" onchange="calculateDuration()">    
+    <label>ආයෝජන කාලය: </label>
+    <select id="colF" disabled>  
+        <option value="" selected>Investment period is automatically selected</option>
+        <option value="මාස 01">මාස 01කි </option>
+        <option value="මාස 03">මාස 03කි </option>
+        <option value="මාස 06">මාස 06කි </option>
+    </select>
+
     <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
     <input type="text" id="colH">
     <label>ලද පොලිය (රු):</label>
@@ -235,9 +241,25 @@
             }
         } catch(err) { console.error("Error:", err); }
     }
+    function calculateDuration() {
+        let startDate = new Date(document.getElementById('colC').value);
+        let endDate = new Date(document.getElementById('colG').value);
+        let durationSelect = document.getElementById('colF');
+        
+        if (!isNaN(startDate) && !isNaN(endDate)) {
+            let diffTime = Math.abs(endDate - startDate);
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            if (diffDays >= 25 && diffDays <= 35) durationSelect.value = "මාස 01";
+            else if (diffDays >= 85 && diffDays <= 95) durationSelect.value = "මාස 03";
+            else if (diffDays >= 170 && diffDays <= 190) durationSelect.value = "මාස 06";
+        }
+    }    
+
 </script>
 </body>
 </html>
+
 
 
 
