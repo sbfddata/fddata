@@ -7,8 +7,6 @@
     <style>
         /* මූලික සැකසුම් */
         body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
-        
-        /* පද්ධතියේ පාලක පැනලය (මුද්‍රණය නොවන කොටස) */
         .no-print-area { background: #90caf9; padding: 20px; text-align: center; }
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; text-align: left; }
@@ -24,13 +22,14 @@
         #report-area { display: none; background: white; width: 210mm; min-height: 297mm; margin: auto; padding: 15mm; box-sizing: border-box; }
         .bold { font-weight: bold; }
         
+        /* ඉහළ කොටස පෙළගැස්වීම */
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
         .header-left { flex-basis: 50%; margin-top: 3.5em; text-align: left; }
         .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
         
         .amunuma-container { text-align: right; width: 100%; margin-bottom: 20px; }
         .amunuma { font-size: 14px; font-weight: bold; margin: 0; }
-        .samurdhi-details-right p, .manager-details-left p { margin: 0; padding: 0; line-height: 1.1; }
+        .samurdhi-details-right p, .manager-details-left p { margin: 0; padding: 0; line-height: 1.2; }
         
         .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 15px 0; }
         
@@ -39,12 +38,14 @@
         .data-table td:first-child, .investment-table td:first-child { width: 65%; }
         .data-table td:nth-child(2), .investment-table td:nth-child(2) { width: 35%; text-align: right; font-family: 'Courier New', monospace; font-weight: bold; }
 
-        /* අත්සන් කොටස එක එල්ලේ පෙළගැස්වීම */
-        .signature-section { display: flex; justify-content: space-between; margin-top: 30px; align-items: flex-start; }
-        .sig-box { flex-basis: 48%; }
-        .sig-box p { margin: 3px 0; }
+        /* අත්සන් කොටස ඉහළ දකුණු කොටසට සමානව පෙළගැස්වීම */
+        .signature-section { display: flex; justify-content: space-between; margin-top: 40px; align-items: flex-start; width: 100%; }
+        .sig-box-left { flex-basis: 50%; text-align: left; }
+        .sig-box-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
+        .sig-content { width: fit-content; } /* අන්තර්ගතයේ පළලට අනුව සීමා කිරීමට */
+        .sig-box-right p, .sig-box-left p { margin: 3px 0; }
 
-        /* මුද්‍රණ සැකසුම් (Print Settings) */
+        /* මුද්‍රණ සැකසුම් */
         @media print {
             @page { size: A4; margin: 0; }
             body { background: none; }
@@ -76,31 +77,22 @@
 
     <label>ආයෝජන මුදල අයත් බැංකුව:</label>
     <select id="colA"><option value="පදියතලාව">පදියතලාව සමෘද්ධි බැංකුව</option></select>
-    
     <label>ආයෝජනය කළ බැංකුවේ නම:</label>
     <input type="text" id="colB">
-    
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC">
-    
-    <label>ආයෝජන රිසිට්පත් අංකය (colD):</label>
+    <label>ආයෝජන රිසිට්පත් අංකය:</label>
     <input type="text" id="colD">
-    
     <label>ආයෝජන මුදල (රු):</label>
     <input type="number" id="colE">
-    
     <label>ආයෝජන කාලය (මාස):</label>
     <input type="text" id="colF">
-    
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
     <input type="date" id="colG">
-    
     <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
     <input type="text" id="colH">
-    
     <label>ලද පොලිය (රු):</label>
     <input type="text" id="colI">
-    
     <label>චෙක්පත් අංකය:</label>
     <input type="text" id="colJ">
 
@@ -153,19 +145,21 @@
     </table>
 
     <div class="signature-section">
-        <div class="sig-box">
+        <div class="sig-box-left">
             <p class="bold">ගිණුම් ලිපිකරු</p>
             <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p>
             <p>නම: .......................................</p>
             <p>අත්සන: .................................</p>
             <p>දිනය: .................................</p>
         </div>
-        <div class="sig-box">
-            <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
-            <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
-            <p>නම: .......................................</p>
-            <p>අත්සන: .................................</p>
-            <p>දිනය: .................................</p>
+        <div class="sig-box-right">
+            <div class="sig-content">
+                <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
+                <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
+                <p>නම: .......................................</p>
+                <p>අත්සන: .................................</p>
+                <p>දිනය: .................................</p>
+            </div>
         </div>
     </div>
 </div>
@@ -186,25 +180,19 @@
     }
 
     function generateReport() {
-        // වර්තමාන දිනය වාර්තාවට යෙදීම
-        const today = new Date();
-        document.getElementById('rDate').innerText = today.toISOString().split('T')[0];
-        
+        document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
-        const deducted = totalInt * 0.07; // 7% රඳවාගැනීමේ පොලිය
+        const deducted = totalInt * 0.07;
 
-        // රුපියල් අගයන් Formatted ආකාරයට පිරවීම
         document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
-        document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value; // බැංකු නම අසල රිසිට්පත් අංකය
-        
+        document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
         document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
         document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
-        
         document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
         
         let rate = document.getElementById('colH').value;
@@ -228,18 +216,12 @@
                 let data = JSON.parse(text);
                 fields.forEach((f, i) => {
                     let element = document.getElementById(f);
-                    // දිනයන් නිවැරදි Format එකට පිරවීම
-                    if((i === 2 || i === 6) && data[i]) {
-                        element.value = new Date(data[i]).toISOString().split('T')[0];
-                    } 
-                    // පොලී ප්‍රතිශතය 0.075 වැනි අගයක් නම් 7.50% ලෙස පෙන්වීම
+                    if((i === 2 || i === 6) && data[i]) { element.value = new Date(data[i]).toISOString().split('T')[0]; } 
                     else if (f === 'colH' && data[i]) {
                         let val = parseFloat(data[i]);
                         element.value = (val < 1) ? (val * 100).toFixed(2) + "%" : data[i];
                     }
-                    else {
-                        element.value = data[i] || "";
-                    }
+                    else { element.value = data[i] || ""; }
                 });
             } catch(e) { 
                 if(text.includes("success")) { alert("සාර්ථකයි!"); if(actionName !== 'searchData') location.reload(); }
