@@ -73,8 +73,17 @@
         <option value="මහ සංගම් අරමුදල">සමුහ සංරක්ෂණ අරමුදල්</option>
     </select>
     
-    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
-    <input type="text" id="colB">
+     <label>ආයෝජනය කළ බැංකුවේ නම:</label>
+    <select id="colB" required>
+        <option value="" disabled selected hidden>Select Bank...</option>
+        <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
+        <option value="මහජන බැංකුව">මහජන බැංකුව</option>
+        <option value="ප්‍රාදේශීය සංවර්ධන බැංකුව">ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
+        <option value="නිවාස සංවර්ධන මූල්‍ය සංස්ථාව">නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
+        <option value="රාජ්‍ය උකස් හා ආයෝජන බැංකුව">රාජ්‍ය උකස් හා ආයෝජන බැංකුව</option>
+        <option value="ජාතික ඉතිරිකිරීමේ බැංකුව">ජාතික ඉතිරිකිරීමේ බැංකුව</option>
+    </select>
+
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC">
     <label>ආයෝජන රිසිට්පත් අංකය:</label>
@@ -228,5 +237,6 @@
 </script>
 </body>
 </html>
+
 
 
