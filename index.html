@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment System Pro - Padiyathalawa</title>
     <style>
-        /* පද්ධතියේ මූලික ස්ටයිල් */
         body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; position: relative; background-color: #f4f7f6; margin: 0; padding: 0; }
         .no-print { background: #90caf9; padding: 20px; text-align: center; }
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -18,28 +17,25 @@
         .print-btn { background: #9b59b6; grid-column: span 3; margin-top: 10px; }
         #login-area { text-align: center; } #system-area { display: none; }
 
-        /* --- ඔබ ලබාදුන් වාර්තා ස්ටයිල් (Report Styles) --- */
+        /* Report Styles */
         #report-area { display: none; background: white; padding: 40px; }
-        .right { text-align: right; } .left { text-align: left; } .center { text-align: center; } .bold { font-weight: bold; }
-        
+        .bold { font-weight: bold; }
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
         .header-left { flex-basis: 50%; margin-top: 3.8em; text-align: left; }
-        .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
-        
+        .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; }
         .amunuma-container { text-align: right; width: 100%; margin-bottom: 20px; }
         .amunuma { font-size: 14px; font-weight: bold; margin: 0; }
-        
         .samurdhi-details-right p, .manager-details-left p { margin: 0; padding: 0; line-height: 1.1; }
-        
         .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 20px 0; }
-        
         .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
         .data-table td, .investment-table td { border: 1px solid #ddd; padding: 4px 8px; vertical-align: top; }
         .data-table td:first-child, .investment-table td:first-child { width: 65%; }
         .data-table td:nth-child(2), .investment-table td:nth-child(2) { width: 35%; text-align: right; font-family: 'Courier New', monospace; font-weight: bold; }
 
-        .signature-section { display: flex; justify-content: space-between; margin-top: 15px; }
-        .signature-section > div { flex-basis: 45%; }
+        /* අත්සන් පේළි එක එල්ලේ තැබීම සඳහා */
+        .signature-section { display: flex; justify-content: space-between; margin-top: 25px; }
+        .sig-box { flex-basis: 48%; }
+        .sig-box p { margin: 2px 0; }
 
         @media print {
             body * { visibility: hidden; }
@@ -70,7 +66,7 @@
 
     <label>ආයෝජන මුදල අයත් බැංකුව:</label>
     <select id="colA"><option value="පදියතලාව">පදියතලාව සමෘද්ධි බැංකුව</option></select>
-    <label>ආයෝජනය කළ බැංකුවේ නම (Bank Name):</label>
+    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
     <input type="text" id="colB">
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC">
@@ -114,7 +110,7 @@
 
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rMainAmount"></span> පොලිය හා මුදල එවිමේ නිවේදනය</div>
 
-    <p class="bold"><span id="rBankDisplay"></span> - 181-60-01-00008318-7</p>
+    <p class="bold"><span id="rBankDisplay"></span> - <span id="rReceiptDisplay"></span></p>
 
     <p>ඉහත සඳහන් ආයෝජනයට අදාලව ලද පොලිය සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo" class="bold"></span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
     
@@ -138,14 +134,14 @@
     </table>
 
     <div class="signature-section">
-        <div>
+        <div class="sig-box">
             <p class="bold">ගිණුම් ලිපිකරු</p>
             <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p>
             <p>නම: .......................................</p>
             <p>අත්සන: .................................</p>
             <p>දිනය: .................................</p>
         </div>
-        <div class="header-right">
+        <div class="sig-box" style="text-align: left;">
             <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
             <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
             <p>නම: .......................................</p>
@@ -174,17 +170,19 @@
         document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
-        const deducted = totalInt * 0.07; // 7% රඳවා ගැනීම
+        const deducted = totalInt * 0.07;
 
         document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
-        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
         
+        // රිසිට්පත් අංකය මෙතනට පිරවීම (colD)
+        document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
+        
+        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
         document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
-
         document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
         
         let rate = document.getElementById('colH').value;
