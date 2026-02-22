@@ -46,28 +46,26 @@
 
     <hr>
 
-<label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
-<select id="colA" required>
-    <option value="" disabled selected hidden>Select Investment Account...</option>
-    <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
-    <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
-    <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
-    <option value="ණය සංරක්ෂණ අරමුදල්">ණය සංරක්ෂණ අරමුදල්</option>
-    <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
-</select>
+    <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
+    <select id="colA" required>
+        <option value="" disabled selected hidden>Select Investment Account...</option>
+        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
+        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
+        <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
+        <option value="ණය සංරක්ෂණ අරමුදල්">ණය සංරක්ෂණ අරමුදල්</option>
+        <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
+    </select>
 
-<br><br>
-
-<label>ආයෝජනය කළ බැංකුවේ නම:</label>
-<select id="colB" required>
-    <option value="" disabled selected hidden>Select Bank...</option>
-    <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
-    <option value="මහජන බැංකුව">මහජන බැංකුව</option>
-    <option value="ප්‍රාදේශීය සංවර්ධන බැංකුව">ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
-    <option value="නිවාස සංවර්ධන මූල්‍ය සංස්ථාව">නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
-    <option value="රාජ්‍ය උකස් හා ආයෝජන බැංකුව">රාජ්‍ය උකස් හා ආයෝජන බැංකුව</option>
-    <option value="ජාතික ඉතිරිකිරීමේ බැංකුව">ජාතික ඉතිරිකිරීමේ බැංකුව</option>
-</select>
+    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
+    <select id="colB" required>
+        <option value="" disabled selected hidden>Select Bank...</option>
+        <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
+        <option value="මහජන බැංකුව">මහජන බැංකුව</option>
+        <option value="ප්‍රාදේශීය සංවර්ධන බැංකුව">ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
+        <option value="නිවාස සංවර්ධන මූල්‍ය සංස්ථාව">නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
+        <option value="රාජ්‍ය උකස් හා ආයෝජන බැංකුව">රාජ්‍ය උකස් හා ආයෝජන බැංකුව</option>
+        <option value="ජාතික ඉතිරිකිරීමේ බැංකුව">ජාතික ඉතිරිකිරීමේ බැංකුව</option>
+    </select>
 
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC" onchange="calculateDuration()">
@@ -81,13 +79,13 @@
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
     <input type="date" id="colG" onchange="calculateDuration()">
     
-<label>ආයෝජන කාලය: </label>
-<select id="colF" disabled>  
-    <option value="">Investment period is automatically selected</option>
-    <option value="මාස 01">මාස 01කි </option>
-    <option value="මාස 03">මාස 03කි </option>
-    <option value="මාස 06">මාස 06කි </option>
-</select>
+    <label>ආයෝජන කාලය: </label>
+    <select id="colF" disabled>  
+        <option value="" selected>Investment period is automatically selected</option>
+        <option value="මාස 01">මාස 01කි </option>
+        <option value="මාස 03">මාස 03කි </option>
+        <option value="මාස 06">මාස 06කි </option>
+    </select>
     
     <label>ආයෝජනය සඳහා ලද පොලිය:</label>
     <input type="text" id="colH">
@@ -121,12 +119,11 @@
     function calculateDuration() {
         let startDate = new Date(document.getElementById('colC').value);
         let endDate = new Date(document.getElementById('colG').value);
+        let durationSelect = document.getElementById('colF');
         
         if (!isNaN(startDate) && !isNaN(endDate)) {
             let diffTime = Math.abs(endDate - startDate);
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            
-            let durationSelect = document.getElementById('colF');
             
             if (diffDays >= 28 && diffDays <= 32) {
                 durationSelect.value = "මාස 01";
@@ -144,7 +141,6 @@
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI'];
         let params = new URLSearchParams();
         
-       
         if(actionName === 'searchData') {
             let sId = document.getElementById('searchId').value;
             if(!sId) { alert("Please enter the receipt number to search!"); return; }
@@ -163,10 +159,16 @@
                 let data = JSON.parse(text);
                 if(actionName === 'searchData') {
                     fields.forEach((f, i) => {
+                        let element = document.getElementById(f);
                         if((i === 2 || i === 6) && data[i]) {
-                            document.getElementById(f).value = new Date(data[i]).toISOString().split('T')[0];
+                            // Date formatting for input type="date"
+                            let dateVal = new Date(data[i]);
+                            if (!isNaN(dateVal)) {
+                                element.value = dateVal.toISOString().split('T')[0];
+                            }
                         } else {
-                            document.getElementById(f).value = data[i] || "";
+                            // If data is empty, set value to "" to show placeholder
+                            element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
                         }
                     });
                     calculateDuration(); 
@@ -183,6 +185,7 @@
 </script>
 </body>
 </html>
+
 
 
 
