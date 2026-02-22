@@ -11,19 +11,17 @@
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; text-align: left; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
-        /* බොත්තම් සැකසුම */
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; transition: 0.3s; }
         .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
         .add { background: #2ecc71; } 
         .delete { background: #e74c3c; }
-        .edit { background: #3498db; }
         .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; }
         
         #login-area { text-align: center; } #system-area { display: none; }
         hr { margin: 20px 0; border: 0; border-top: 1px solid #eee; }
 
-        /* මුද්‍රණ වාර්තාවේ ස්ටයිල් */
+        /* Report Styles */
         #report-area { display: none; background: white; width: 210mm; min-height: 297mm; margin: auto; padding: 15mm; box-sizing: border-box; }
         .bold { font-weight: bold; }
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
@@ -41,7 +39,6 @@
             body { background: none; }
             .header, .container { display: none !important; }
             #report-area { display: block !important; width: 100%; padding: 15mm; position: static; visibility: visible; }
-            #report-area * { visibility: visible; }
         }
     </style>
 </head>
@@ -127,7 +124,7 @@
 <div id="report-area">
     <div class="header-container">
         <div class="header-left">
-            <p>කළමනාකරු,<br>සමෘද්ධි බැංකුව,<br>පදියතලාව.</p>
+            <p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p>
         </div>
         <div class="header-right">
             <div style="text-align: right; width: 100%; margin-bottom: 20px;"><h5 style="font-size: 14px; font-weight: bold; margin: 0;">ඇමුණුම 4</h5></div>
@@ -177,7 +174,6 @@
 </div>
 
 <script>
-    // ඔබ ලබාදුන් නව SCRIPT URL එක භාවිතා කර ඇත
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOzu1pMPRGSpmq6qAH1HPTrVCsiejjit6jIyyOnHwdhj5kR_uOGyFxdGpQVx71WE6uDg/exec";
 
     function doLogin() {
@@ -203,11 +199,8 @@
         let startDate = new Date(document.getElementById('colC').value);
         let endDate = new Date(document.getElementById('colG').value);
         let durationSelect = document.getElementById('colF');
-        
         if (!isNaN(startDate) && !isNaN(endDate)) {
-            let diffTime = Math.abs(endDate - startDate);
-            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            
+            let diffDays = Math.ceil(Math.abs(endDate - startDate) / (1000 * 60 * 60 * 24)); 
             if (diffDays >= 25 && diffDays <= 35) durationSelect.value = "මාස 01";
             else if (diffDays >= 85 && diffDays <= 95) durationSelect.value = "මාස 03";
             else if (diffDays >= 170 && diffDays <= 190) durationSelect.value = "මාස 06";
@@ -215,10 +208,12 @@
     }
 
     async function generateReport() {
-        // Print කිරීමට පෙර Save කිරීම
         await process('addData');
 
         document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
+        // ලිපිනයට අදාළ නම colA වෙතින් ලබා ගැනීම
+        document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
+
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
         const deducted = totalInt * 0.07;
@@ -243,7 +238,6 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
-        
         if(actionName === 'searchData') {
             let sId = document.getElementById('searchId').value;
             if(!sId) { alert("Please enter the receipt number to search!"); return; }
@@ -251,13 +245,11 @@
         } else {
             fields.forEach(f => params.append(f, document.getElementById(f).value));
         }
-        
         params.append('action', actionName);
 
         try {
             let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
             let text = await response.text();
-            
             try {
                 let data = JSON.parse(text);
                 if(actionName === 'searchData') {
@@ -275,17 +267,12 @@
             } catch(e) {
                 if(text.toLowerCase().includes("success")) {
                     alert("Operation Successful!");
-                    // Reload වීම වැළැක්වීමට location.reload() ඉවත් කර ඇත.
                     if(actionName !== 'searchData' && actionName !== 'addData') {
                          fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
                     }
-                } else {
-                    alert("Response: " + text);
-                }
+                } else { alert("Response: " + text); }
             }
-        } catch(err) {
-            alert("Error!: " + err.message);
-        }
+        } catch(err) { alert("Error!: " + err.message); }
     }
 </script>
 </body>
