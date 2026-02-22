@@ -78,8 +78,7 @@
     <input type="date" id="colG" onchange="calculateDuration()">
     
 <label>ආයෝජන කාලය: </label>
-<select id="colF" disabled>
-    <option value="">දිනයන් තෝරන්න...</option>
+<select id="colF" disabled>    
     <option value="මාස 01">මාස 01කි </option>
     <option value="මාස 03">මාස 03කි </option>
     <option value="මාස 06">මාස 06කි </option>
@@ -110,11 +109,10 @@
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("පරිශීලක නාමය හෝ මුරපදය වැරදියි!"); }
+            } else { alert("Incorrect username or password!"); }
         });
     }
 
-    // ස්වයංක්‍රීය කාලය ගණනය කිරීමේ Logic එක
     function calculateDuration() {
         let startDate = new Date(document.getElementById('colC').value);
         let endDate = new Date(document.getElementById('colG').value);
@@ -132,7 +130,7 @@
             } else if (diffDays >= 175 && diffDays <= 184) {
                 durationSelect.value = "මාස 06";
             } else {
-                durationSelect.value = ""; // ගැලපෙන්නේ නැතිනම් හිස්ව තබන්න
+                durationSelect.value = ""; 
             }
         }
     }
@@ -141,10 +139,10 @@
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI'];
         let params = new URLSearchParams();
         
-        // Search වලදී search box එකේ අගය colD එකට ලබා දෙන්න
+       
         if(actionName === 'searchData') {
             let sId = document.getElementById('searchId').value;
-            if(!sId) { alert("කරුණාකර සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න!"); return; }
+            if(!sId) { alert("Please enter the receipt number to search!"); return; }
             params.append('colD', sId);
         } else {
             fields.forEach(f => params.append(f, document.getElementById(f).value));
@@ -166,19 +164,20 @@
                             document.getElementById(f).value = data[i] || "";
                         }
                     });
-                    calculateDuration(); // සෙවීමෙන් පසු කාලය නැවත ගණනය කරන්න
-                    alert("දත්ත සොයාගන්නා ලදී!");
+                    calculateDuration(); 
+                    alert("Data found!");
                 }
             } catch(e) {
-                alert("ප්‍රතිචාරය: " + text);
+                alert("Response: " + text);
                 if(actionName !== 'searchData' && text.toLowerCase().includes("success")) location.reload();
             }
         } catch(err) {
-            alert("දෝෂයකි: " + err.message);
+            alert("Error!: " + err.message);
         }
     }
 </script>
 </body>
 </html>
+
 
 
