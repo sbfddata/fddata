@@ -19,13 +19,13 @@
         
         #login-area { text-align: center; } #system-area { display: none; }
 
-        /* Report Styles */
-        #report-area { display: none; background: white; padding: 50px; line-height: 1.6; color: black; }
+        /* Report Print Styles */
+        #report-area { display: none; background: white; padding: 40px; line-height: 1.6; color: black; font-size: 14px; }
         .report-header { text-align: right; margin-bottom: 20px; }
-        .report-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 20px 0; font-size: 18px; }
-        .report-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .report-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 20px 0; font-size: 16px; }
+        .report-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         .report-table td { border: 1px solid #000; padding: 8px; }
-        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; margin-top: 60px; }
+        .footer-grid { display: flex; justify-content: space-between; margin-top: 60px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -72,8 +72,8 @@
     <label>ආයෝජන මුදල (රු):</label>
     <input type="number" id="colE">
 
-    <label>ආයෝජන කාලය:</label>
-    <input type="text" id="colF">
+    <label>ආයෝජන කාලය (මාස):</label>
+    <input type="text" id="colF" placeholder="Ex: 3 මාස">
 
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
     <input type="date" id="colG">
@@ -100,38 +100,55 @@
     <div class="report-header">
         සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span>
     </div>
+    
     <p>කළමනාකරු,<br>සමෘද්ධි බැංකුව,<br>පදියතලාව.</p>
     
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rAmount"></span> පොලිය හා මුදල එවීම් නිවේදනය</div>
     
-    <p><span id="rBank"></span> - <span id="rBankDetails"></span></p>
-    <p>ඉහත සඳහන් ආයෝජනයට අදාළව ලද පොලිය සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rReceipt"></span> දරණ චෙක්පත මගින් අමුණා එවමි.</p>
+    <p><strong><span id="rBankName"></span> - <span id="rBankAcc"></span></strong></p>
+    
+    <p>ඉහත සඳහන් ආයෝජනයට අදාළව ලද පොලිය සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo"></span> දරණ චෙක්පත මගින් අමුණා එවමි.</p>
     
     <p>ඔබගේ දැන ගැනීම සඳහා පහත සඳහන් තොරතුරු දන්වා එවමු.</p>
 
     <table class="report-table">
-        <tr><td>1. අදාළ ආයෝජනයට ලද මුළු පොලිය (රු)</td><td style="text-align: right;" id="rInt"></td></tr>
-        <tr><td>2. අඩු කළ සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td style="text-align: right;">7.00</td></tr>
-        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rNet"></td></tr>
+        <tr>
+            <td style="width: 70%;">1. අදාළ ආයෝජනයට ලද මුළු පොලිය (රු)</td>
+            <td style="text-align: right; width: 30%;" id="rTotalInt"></td>
+        </tr>
+        <tr>
+            <td>2. අඩු කළ සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td>
+            <td style="text-align: right;">7.00</td>
+        </tr>
+        <tr>
+            <td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td>
+            <td style="text-align: right; font-weight: bold;" id="rNetInt"></td>
+        </tr>
     </table>
 
+    <p>තවද ඔබගේ ඉල්ලීම පරිදි ආයෝජනය කළ මුදල චෙක්පත් අංක .................... මගින් එවනු ලබන බව දන්වමු.</p>
+
     <table class="report-table">
-        <tr><td>ආයෝජනය කළ මුදල (රු):</td><td id="rAmt2"></td></tr>
+        <tr><td>ආයෝජනය කළ මුදල (රු):</td><td id="rAmtVal" style="text-align: right;"></td></tr>
         <tr><td>ආයෝජන වර්ගය:</td><td>ස්ථීර තැන්පතු</td></tr>
-        <tr><td>ආයෝජනය කළ කාලය:</td><td id="rPeriod"></td></tr>
-        <tr><td>ආයෝජන පොලි ප්‍රතිශතය:</td><td id="rRate"></td></tr>
-        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td id="rExp"></td></tr>
-        <tr><td>භාණ්ඩාගාර බිල්පතක් නම් එහි මුහුණත වටිනාකම:</td><td>0.00</td></tr>
+        <tr><td>ආයෝජනය කළ කාලය:</td><td id="rPeriodDisplay"></td></tr>
+        <tr><td>ආයෝජන පොලි ප්‍රතිශතය:</td><td id="rRateVal" style="text-align: right;"></td></tr>
+        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td id="rExpDate" style="text-align: right;"></td></tr>
+        <tr><td>භාණ්ඩාගාර බිල්පතක් නම් එහි මුහුණත වටිනාකම:</td><td style="text-align: right;">0.00</td></tr>
     </table>
 
     <div class="footer-grid">
-        <div>ගිණුම් ලිපිකරු<br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................</div>
-        <div style="text-align: right;">බලලත් නිලධාරි/කළමනාකරු<br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................</div>
+        <div>
+            <strong>ගිණුම් ලිපිකරු</strong><br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................
+        </div>
+        <div style="text-align: right;">
+            <strong>බලලත් නිලධාරි/කළමනාකරු</strong><br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................
+        </div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOzu1pMPRGSpmq6qAH1HPTrVCsiejjit6jIyyOnHwdhj5kR_uOGyFxdGpQVx71WE6uDg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKhi0XEubegpu5HSl0BIQbAM_9GMvw8iqpRm9pn3_K7WvCO6eOM1NxuIdXqtclgFGvOQ/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -142,34 +159,38 @@
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("මුරපදය වැරදියි!"); }
+            } else { alert("මුරපදය හෝ පරිශීලක නාමය වැරදියි!"); }
         });
     }
 
     function generateReport() {
-        // අද දිනය ස්වයංක්‍රීයව සැකසීම
+        // අද දිනය ස්වයංක්‍රීයව පිරවීම
         const today = new Date();
-        const formattedDate = today.getFullYear() + "-" + (today.getMonth()+1).toString().padStart(2, '0') + "-" + today.getDate().toString().padStart(2, '0');
-        document.getElementById('rDate').innerText = formattedDate;
+        const formattedToday = today.toISOString().split('T')[0];
+        document.getElementById('rDate').innerText = formattedToday;
 
-        // දත්ත පිරවීම
-        document.getElementById('rAmount').innerText = Number(document.getElementById('colE').value).toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rAmt2').innerText = Number(document.getElementById('colE').value).toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rBank').innerText = document.getElementById('colB').value;
-        document.getElementById('rBankDetails').innerText = "වෙතින්"; // අවශ්‍ය නම් බැංකු ගිණුම් අංකය මෙහි එක් කළ හැක
-        document.getElementById('rReceipt').innerText = document.getElementById('colJ').value; // චෙක්පත් අංකය
-        document.getElementById('rInt').innerText = document.getElementById('colI').value;
-        document.getElementById('rPeriod').innerText = document.getElementById('colF').value;
+        // දත්ත ලබා ගැනීම
+        const amt = parseFloat(document.getElementById('colE').value) || 0;
+        const totalInt = parseFloat(document.getElementById('colI').value) || 0;
+        const startDate = document.getElementById('colC').value;
+        const endDate = document.getElementById('colG').value;
+        const period = document.getElementById('colF').value;
+
+        // වාර්තාවට දත්ත පිරවීම
+        document.getElementById('rAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rAmtVal').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rBankName').innerText = document.getElementById('colB').value;
+        document.getElementById('rBankAcc').innerText = "181-60-01-00008318-7"; // ස්ථාවර අගයක් හෝ colA මත පදනම් විය හැක
+        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
+        document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rNetInt').innerText = (totalInt - 7).toLocaleString('en-US', {minimumFractionDigits: 2});
         
-        // පොලී ප්‍රතිශතය % ලකුණ සහිතව
+        // කාලය සැකසීම: "3 මාස (2025-12-26 සිට 2026-03-26 දක්වා)"
+        document.getElementById('rPeriodDisplay').innerText = `${period} (${startDate} සිට ${endDate} දක්වා)`;
+        
         let rate = document.getElementById('colH').value;
-        document.getElementById('rRate').innerText = rate.includes('%') ? rate : rate + "%";
-        
-        document.getElementById('rExp').innerText = document.getElementById('colG').value;
-
-        // ශුද්ධ පොලිය (පොලිය - 7)
-        let totalInt = parseFloat(document.getElementById('colI').value) || 0;
-        document.getElementById('rNet').innerText = (totalInt - 7).toFixed(2);
+        document.getElementById('rRateVal').innerText = rate.includes('%') ? rate : rate + "%";
+        document.getElementById('rExpDate').innerText = endDate;
 
         window.print();
     }
@@ -199,8 +220,8 @@
                         if((i === 2 || i === 6) && data[i]) {
                             element.value = new Date(data[i]).toISOString().split('T')[0];
                         } else if (f === 'colH' && data[i]) {
-                            // පොලී ප්‍රතිශතය 0.075 ලෙස ඇත්නම් එය 7.5% ලෙස පෙන්වීමට
                             let val = parseFloat(data[i]);
+                            // පත්‍රිකාවේ 0.075 ලෙස ඇත්නම් එය 7.5% ලෙස පෙන්වීම
                             element.value = (val < 1 && val > 0) ? (val * 100).toFixed(2) + "%" : data[i];
                         } else {
                             element.value = data[i] || "";
