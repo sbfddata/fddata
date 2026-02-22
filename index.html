@@ -5,34 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment System Pro - Padiyathalawa</title>
     <style>
-        /* --- Base System Styles --- */
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
-        .header { background: #90caf9; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; }
-        .container { background: white; max-width: 700px; margin: 15px auto; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        label { display: block; margin-top: 8px; font-weight: bold; font-size: 13px; }
-        input, select { width: 100%; padding: 8px; margin: 4px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; }
-        button { padding: 10px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
-        .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 8px; }
+        /* පද්ධතියේ මූලික ස්ටයිල් */
+        body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; position: relative; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .no-print { background: #90caf9; padding: 20px; text-align: center; }
+        .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
+        .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
         .add { background: #2ecc71; } .edit { background: #3498db; } .delete { background: #e74c3c; }
-        .print-btn { background: #9b59b6; grid-column: span 3; margin-top: 8px; }
+        .print-btn { background: #9b59b6; grid-column: span 3; margin-top: 10px; }
         #login-area { text-align: center; } #system-area { display: none; }
 
         /* --- ඔබ ලබාදුන් වාර්තා ස්ටයිල් (Report Styles) --- */
-        #report-area { display: none; font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: white; padding: 40px; }
+        #report-area { display: none; background: white; padding: 40px; }
         .right { text-align: right; } .left { text-align: left; } .center { text-align: center; } .bold { font-weight: bold; }
+        
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
-        .header-left { flex-basis: 50%; margin-top: 3.8em; }
-        .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; }
-        .amunuma { font-size: 14px; font-weight: bold; }
-        .amunuma-container { text-align: right; margin-bottom: 20px; }
-        .manager-details-left p, .samurdhi-details-right p { margin: 0; padding: 0; line-height: 1.1; }
-        .report-title { font-size: 14pt; margin-top: 10px; margin-bottom: 15px; font-weight: bold; text-align: center; text-decoration: underline; }
-        .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        .data-table td, .investment-table td { border: 1px solid #ddd; padding: 5px 8px; }
+        .header-left { flex-basis: 50%; margin-top: 3.8em; text-align: left; }
+        .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
+        
+        .amunuma-container { text-align: right; width: 100%; margin-bottom: 20px; }
+        .amunuma { font-size: 14px; font-weight: bold; margin: 0; }
+        
+        .samurdhi-details-right p, .manager-details-left p { margin: 0; padding: 0; line-height: 1.1; }
+        
+        .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 20px 0; }
+        
+        .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+        .data-table td, .investment-table td { border: 1px solid #ddd; padding: 4px 8px; vertical-align: top; }
         .data-table td:first-child, .investment-table td:first-child { width: 65%; }
         .data-table td:nth-child(2), .investment-table td:nth-child(2) { width: 35%; text-align: right; font-family: 'Courier New', monospace; font-weight: bold; }
-        .signature-section { display: flex; justify-content: space-between; margin-top: 25px; }
+
+        .signature-section { display: flex; justify-content: space-between; margin-top: 15px; }
+        .signature-section > div { flex-basis: 45%; }
 
         @media print {
             body * { visibility: hidden; }
@@ -43,7 +50,9 @@
 </head>
 <body>
 
-<div class="header no-print">සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය - පදියතලාව</div>
+<div class="no-print">
+    <h2>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය - පදියතලාව</h2>
+</div>
 
 <div id="login-area" class="container no-print">
     <h3 style="color: purple;">LOGIN</h3>
@@ -60,17 +69,12 @@
     </div>
 
     <label>ආයෝජන මුදල අයත් බැංකුව:</label>
-    <select id="colA">
-        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
-        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
-        <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
-    </select>
-    
-    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
+    <select id="colA"><option value="පදියතලාව">පදියතලාව සමෘද්ධි බැංකුව</option></select>
+    <label>ආයෝජනය කළ බැංකුවේ නම (Bank Name):</label>
     <input type="text" id="colB">
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC">
-    <label>ආයෝජන රිසිට්පත් අංකය (colD):</label>
+    <label>ආයෝජන රිසිට්පත් අංකය:</label>
     <input type="text" id="colD">
     <label>ආයෝජන මුදල (රු):</label>
     <input type="number" id="colE">
@@ -97,7 +101,7 @@
     <div class="header-container">
         <div class="header-left">
             <div class="manager-details-left">
-                <p>කළමනාකරු,<br><span id="rManagerBank">සමෘද්ධි බැංකුව,</span><br><span id="rManagerCity">පදියතලාව</span></p>
+                <p>කළමනාකරු,<br>සමෘද්ධි බැංකුව,<br>පදියතලාව.</p>
             </div>
         </div>
         <div class="header-right">
@@ -110,7 +114,7 @@
 
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rMainAmount"></span> පොලිය හා මුදල එවිමේ නිවේදනය</div>
 
-    <p><span id="rBankDisplay" class="bold"></span> - 181-60-01-00008318-7</p>
+    <p class="bold"><span id="rBankDisplay"></span> - 181-60-01-00008318-7</p>
 
     <p>ඉහත සඳහන් ආයෝජනයට අදාලව ලද පොලිය සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo" class="bold"></span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
     
@@ -134,8 +138,20 @@
     </table>
 
     <div class="signature-section">
-        <div><p class="bold">ගිණුම් ලිපිකරු</p><p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p><p>නම: ...........................</p><p>අත්සන: ........................</p><p>දිනය: ...........................</p></div>
-        <div class="right"><p class="bold">බලයලත් නිලදරු/කළමනාකරු</p><p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p><p>නම: ...........................</p><p>අත්සන: ........................</p><p>දිනය: ...........................</p></div>
+        <div>
+            <p class="bold">ගිණුම් ලිපිකරු</p>
+            <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p>
+            <p>නම: .......................................</p>
+            <p>අත්සන: .................................</p>
+            <p>දිනය: .................................</p>
+        </div>
+        <div class="header-right">
+            <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
+            <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
+            <p>නම: .......................................</p>
+            <p>අත්සන: .................................</p>
+            <p>දිනය: .................................</p>
+        </div>
     </div>
 </div>
 
@@ -155,14 +171,10 @@
     }
 
     function generateReport() {
-        // දිනය සැකසීම
-        const today = new Date();
-        document.getElementById('rDate').innerText = today.toISOString().split('T')[0];
-
-        // දත්ත පිරවීම
+        document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
-        const deducted = totalInt * 0.07; // ඔබ ලබාදුන් 7% තර්කය
+        const deducted = totalInt * 0.07; // 7% රඳවා ගැනීම
 
         document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
@@ -173,14 +185,11 @@
         document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
 
-        document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " මාස (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
-        document.getElementById('rRateBottom').innerText = document.getElementById('colH').value + "%";
+        document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
+        
+        let rate = document.getElementById('colH').value;
+        document.getElementById('rRateBottom').innerText = rate.includes('%') ? rate : rate + "%";
         document.getElementById('rMaturityDate').innerText = document.getElementById('colG').value;
-
-        // කළමනාකරු ලිපිනය සැකසීම
-        const bankType = document.getElementById('colA').value;
-        if(bankType.includes("පල්ලේගම")) { document.getElementById('rManagerCity').innerText = "පල්ලේගම"; }
-        else { document.getElementById('rManagerCity').innerText = "පදියතලාව"; }
 
         window.print();
     }
@@ -202,7 +211,7 @@
                     if((i === 2 || i === 6) && data[i]) element.value = new Date(data[i]).toISOString().split('T')[0];
                     else if (f === 'colH' && data[i]) {
                         let val = parseFloat(data[i]);
-                        element.value = (val < 1) ? (val * 100).toFixed(2) : data[i];
+                        element.value = (val < 1) ? (val * 100).toFixed(2) + "%" : data[i];
                     }
                     else element.value = data[i] || "";
                 });
