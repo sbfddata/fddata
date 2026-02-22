@@ -10,7 +10,6 @@
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .search-container { background: #fffde7; padding: 15px; border: 1px solid #fbc02d; border-radius: 8px; margin-bottom: 20px; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
         button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
         .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
@@ -19,13 +18,12 @@
         
         #login-area { text-align: center; } #system-area { display: none; }
 
-        /* Report Print Styles */
-        #report-area { display: none; background: white; padding: 40px; line-height: 1.6; color: black; font-size: 14px; }
+        /* වාර්තාව මුද්‍රණය සඳහා වන ආකෘතිය */
+        #report-area { display: none; background: white; padding: 40px; line-height: 2.0; color: black; font-size: 15px; }
         .report-header { text-align: right; margin-bottom: 20px; }
-        .report-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 20px 0; font-size: 16px; }
+        .report-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 20px 0; font-size: 17px; }
         .report-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         .report-table td { border: 1px solid #000; padding: 8px; }
-        .footer-grid { display: flex; justify-content: space-between; margin-top: 60px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -46,44 +44,31 @@
 </div>
 
 <div id="system-area" class="container">
-    <div class="search-container">
+    <div style="background: #fffde7; padding: 15px; border: 1px solid #fbc02d; border-radius: 8px; margin-bottom: 20px;">
         <label>Enter receipt number:</label>
-        <input type="text" id="searchId" placeholder="දත්ත සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න">
+        <input type="text" id="searchId" placeholder="සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න">
         <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     </div>
 
     <hr>
     <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
-    <select id="colA">
-        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
-        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
-        <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
-    </select>
-    
+    <select id="colA"><option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option></select>
     <label>ආයෝජනය කළ බැංකුවේ නම:</label>
     <input type="text" id="colB">
-
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC">
-
     <label>ආයෝජන රිසිට්පත් අංකය:</label>
     <input type="text" id="colD">
-
     <label>ආයෝජන මුදල (රු):</label>
     <input type="number" id="colE">
-
     <label>ආයෝජන කාලය (මාස):</label>
-    <input type="text" id="colF" placeholder="Ex: 3 මාස">
-
+    <input type="text" id="colF">
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
     <input type="date" id="colG">
-
     <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
     <input type="text" id="colH">
-
     <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label>
     <input type="text" id="colI">
-
     <label>චෙක්පත් අංකය:</label>
     <input type="text" id="colJ">
 
@@ -91,7 +76,7 @@
         <button class="add" onclick="process('addData')">Data Add</button>
         <button class="edit" onclick="process('editData')">Data Edit</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print Report (වාර්තාව මුද්‍රණය)</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print Report</button>
     </div>
 </div>
 
@@ -105,45 +90,32 @@
     
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rAmount"></span> පොලිය හා මුදල එවීම් නිවේදනය</div>
     
-    <p><strong><span id="rBankName"></span> - <span id="rBankAcc"></span></strong></p>
+    <p><strong><span id="rBankName"></span> - 181-60-01-00008318-7</strong></p>
     
-    <p>ඉහත සඳහන් ආයෝජනයට අදාළව ලද පොලිය සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo"></span> දරණ චෙක්පත මගින් අමුණා එවමි.</p>
+    <p>ඉහත සඳහන් ආයෝජනයට අදාළව ලද පොලිය සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rReceiptNo"></span> දරණ රිසිට්පතට අදාළව <span id="rCheckNo"></span> දරණ චෙක්පත මගින් අමුණා එවමි.</p>
     
     <p>ඔබගේ දැන ගැනීම සඳහා පහත සඳහන් තොරතුරු දන්වා එවමු.</p>
 
     <table class="report-table">
-        <tr>
-            <td style="width: 70%;">1. අදාළ ආයෝජනයට ලද මුළු පොලිය (රු)</td>
-            <td style="text-align: right; width: 30%;" id="rTotalInt"></td>
-        </tr>
-        <tr>
-            <td>2. අඩු කළ සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td>
-            <td style="text-align: right;">7.00</td>
-        </tr>
-        <tr>
-            <td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td>
-            <td style="text-align: right; font-weight: bold;" id="rNetInt"></td>
-        </tr>
+        <tr><td>1. අදාළ ආයෝජනයට ලද මුළු පොලිය (රු)</td><td style="text-align: right;" id="rTotalInt"></td></tr>
+        <tr><td>2. අඩු කළ සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td style="text-align: right;">7.00</td></tr>
+        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rNetInt"></td></tr>
     </table>
 
     <p>තවද ඔබගේ ඉල්ලීම පරිදි ආයෝජනය කළ මුදල චෙක්පත් අංක .................... මගින් එවනු ලබන බව දන්වමු.</p>
 
     <table class="report-table">
-        <tr><td>ආයෝජනය කළ මුදල (රු):</td><td id="rAmtVal" style="text-align: right;"></td></tr>
+        <tr><td>ආයෝජනය කළ මුදල (රු):</td><td style="text-align: right;" id="rAmtVal"></td></tr>
         <tr><td>ආයෝජන වර්ගය:</td><td>ස්ථීර තැන්පතු</td></tr>
         <tr><td>ආයෝජනය කළ කාලය:</td><td id="rPeriodDisplay"></td></tr>
-        <tr><td>ආයෝජන පොලි ප්‍රතිශතය:</td><td id="rRateVal" style="text-align: right;"></td></tr>
-        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td id="rExpDate" style="text-align: right;"></td></tr>
+        <tr><td>ආයෝජන පොලි ප්‍රතිශතය:</td><td style="text-align: right;" id="rRateVal"></td></tr>
+        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td style="text-align: right;" id="rExpDate"></td></tr>
         <tr><td>භාණ්ඩාගාර බිල්පතක් නම් එහි මුහුණත වටිනාකම:</td><td style="text-align: right;">0.00</td></tr>
     </table>
 
-    <div class="footer-grid">
-        <div>
-            <strong>ගිණුම් ලිපිකරු</strong><br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................
-        </div>
-        <div style="text-align: right;">
-            <strong>බලලත් නිලධාරි/කළමනාකරු</strong><br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................
-        </div>
+    <div style="display: flex; justify-content: space-between; margin-top: 60px;">
+        <div><strong>ගිණුම් ලිපිකරු</strong><br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</div>
+        <div style="text-align: right;"><strong>බලලත් නිලධාරි/කළමනාකරු</strong><br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</div>
     </div>
 </div>
 
@@ -159,33 +131,29 @@
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("මුරපදය හෝ පරිශීලක නාමය වැරදියි!"); }
+            } else { alert("Login Failed!"); }
         });
     }
 
     function generateReport() {
-        // අද දිනය ස්වයංක්‍රීයව පිරවීම
-        const today = new Date();
-        const formattedToday = today.toISOString().split('T')[0];
-        document.getElementById('rDate').innerText = formattedToday;
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('rDate').innerText = today;
 
-        // දත්ත ලබා ගැනීම
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
         const startDate = document.getElementById('colC').value;
         const endDate = document.getElementById('colG').value;
         const period = document.getElementById('colF').value;
 
-        // වාර්තාවට දත්ත පිරවීම
+        // වාර්තාවට දත්ත ඇතුළත් කිරීම
         document.getElementById('rAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rAmtVal').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rBankName').innerText = document.getElementById('colB').value;
-        document.getElementById('rBankAcc').innerText = "181-60-01-00008318-7"; // ස්ථාවර අගයක් හෝ colA මත පදනම් විය හැක
-        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
+        document.getElementById('rBankName').innerText = document.getElementById('colB').value; // බැංකුවේ නම
+        document.getElementById('rReceiptNo').innerText = document.getElementById('colD').value; // රිසිට්පත් අංකය
+        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value; // චෙක්පත් අංකය
+        
         document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rNetInt').innerText = (totalInt - 7).toLocaleString('en-US', {minimumFractionDigits: 2});
-        
-        // කාලය සැකසීම: "3 මාස (2025-12-26 සිට 2026-03-26 දක්වා)"
         document.getElementById('rPeriodDisplay').innerText = `${period} (${startDate} සිට ${endDate} දක්වා)`;
         
         let rate = document.getElementById('colH').value;
@@ -198,11 +166,8 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
-        
         if(actionName === 'searchData') {
-            let sId = document.getElementById('searchId').value;
-            if(!sId) { alert("කරුණාකර රිසිට්පත් අංකය ඇතුළත් කරන්න!"); return; }
-            params.append('colD', sId);
+            params.append('colD', document.getElementById('searchId').value);
         } else {
             fields.forEach(f => params.append(f, document.getElementById(f).value));
         }
@@ -211,7 +176,6 @@
         try {
             let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
             let text = await response.text();
-            
             try {
                 let data = JSON.parse(text);
                 if(actionName === 'searchData') {
@@ -221,7 +185,7 @@
                             element.value = new Date(data[i]).toISOString().split('T')[0];
                         } else if (f === 'colH' && data[i]) {
                             let val = parseFloat(data[i]);
-                            // පත්‍රිකාවේ 0.075 ලෙස ඇත්නම් එය 7.5% ලෙස පෙන්වීම
+                            // දත්ත සෙවීමේදී පොලී ප්‍රතිශතය නිවැරදි කිරීම
                             element.value = (val < 1 && val > 0) ? (val * 100).toFixed(2) + "%" : data[i];
                         } else {
                             element.value = data[i] || "";
@@ -230,12 +194,10 @@
                     alert("දත්ත සොයාගන්නා ලදී!");
                 }
             } catch(e) {
-                if(text.toLowerCase().includes("success")) {
-                    alert("සාර්ථකයි!");
-                    if(actionName !== 'searchData') location.reload();
-                } else { alert("ප්‍රතිචාරය: " + text); }
+                if(text.includes("success")) { alert("සාර්ථකයි!"); location.reload(); }
+                else { alert(text); }
             }
-        } catch(err) { alert("දෝෂයකි: " + err.message); }
+        } catch(err) { alert("Error: " + err); }
     }
 </script>
 </body>
