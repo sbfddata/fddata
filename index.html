@@ -20,12 +20,12 @@
         #login-area { text-align: center; } #system-area { display: none; }
 
         /* Report Styles */
-        #report-area { display: none; background: white; padding: 50px; line-height: 1.6; }
+        #report-area { display: none; background: white; padding: 50px; line-height: 1.6; color: black; }
         .report-header { text-align: right; margin-bottom: 20px; }
-        .report-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 20px 0; }
+        .report-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 20px 0; font-size: 18px; }
         .report-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .report-table td, .report-table th { border: 1px solid #ddd; padding: 8px; }
-        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; margin-top: 50px; }
+        .report-table td { border: 1px solid #000; padding: 8px; }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; margin-top: 60px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -48,13 +48,17 @@
 <div id="system-area" class="container">
     <div class="search-container">
         <label>Enter receipt number:</label>
-        <input type="text" id="searchId" placeholder="Enter receipt number to search data">
+        <input type="text" id="searchId" placeholder="දත්ත සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න">
         <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     </div>
 
     <hr>
     <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
-    <select id="colA"><option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option></select>
+    <select id="colA">
+        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
+        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
+        <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
+    </select>
     
     <label>ආයෝජනය කළ බැංකුවේ නම:</label>
     <input type="text" id="colB">
@@ -87,11 +91,12 @@
         <button class="add" onclick="process('addData')">Data Add</button>
         <button class="edit" onclick="process('editData')">Data Edit</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print Report</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print Report (වාර්තාව මුද්‍රණය)</button>
     </div>
 </div>
 
 <div id="report-area">
+    <div style="text-align: right; font-weight: bold;">ඇමුණුම 4</div>
     <div class="report-header">
         සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span>
     </div>
@@ -99,25 +104,29 @@
     
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rAmount"></span> පොලිය හා මුදල එවීම් නිවේදනය</div>
     
-    <p><span id="rBank"></span> - <span id="rCheck"></span></p>
+    <p><span id="rBank"></span> - <span id="rBankDetails"></span></p>
     <p>ඉහත සඳහන් ආයෝජනයට අදාළව ලද පොලිය සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rReceipt"></span> දරණ චෙක්පත මගින් අමුණා එවමි.</p>
     
+    <p>ඔබගේ දැන ගැනීම සඳහා පහත සඳහන් තොරතුරු දන්වා එවමු.</p>
+
     <table class="report-table">
-        <tr><td>1. අදාළ ආයෝජනයට ලද මුළු පොලිය (රු)</td><td id="rInt"></td></tr>
-        <tr><td>2. අඩු කළ සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td>7.00</td></tr>
-        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td id="rNet"></td></tr>
+        <tr><td>1. අදාළ ආයෝජනයට ලද මුළු පොලිය (රු)</td><td style="text-align: right;" id="rInt"></td></tr>
+        <tr><td>2. අඩු කළ සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td style="text-align: right;">7.00</td></tr>
+        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rNet"></td></tr>
     </table>
 
     <table class="report-table">
         <tr><td>ආයෝජනය කළ මුදල (රු):</td><td id="rAmt2"></td></tr>
-        <tr><td>ආයෝජන කාලය:</td><td id="rPeriod"></td></tr>
+        <tr><td>ආයෝජන වර්ගය:</td><td>ස්ථීර තැන්පතු</td></tr>
+        <tr><td>ආයෝජනය කළ කාලය:</td><td id="rPeriod"></td></tr>
         <tr><td>ආයෝජන පොලි ප්‍රතිශතය:</td><td id="rRate"></td></tr>
         <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td id="rExp"></td></tr>
+        <tr><td>භාණ්ඩාගාර බිල්පතක් නම් එහි මුහුණත වටිනාකම:</td><td>0.00</td></tr>
     </table>
 
     <div class="footer-grid">
-        <div>ගිණුම් ලිපිකරු<br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</div>
-        <div style="text-align: right;">බලලත් නිලධාරි/කළමනාකරු<br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</div>
+        <div>ගිණුම් ලිපිකරු<br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................</div>
+        <div style="text-align: right;">බලලත් නිලධාරි/කළමනාකරු<br>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය<br>නම: .................................<br>අත්සන: .............................<br>දිනය: ................................</div>
     </div>
 </div>
 
@@ -133,27 +142,32 @@
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("Login Failed!"); }
+            } else { alert("මුරපදය වැරදියි!"); }
         });
     }
 
     function generateReport() {
-        // අද දිනය ලබා ගැනීම
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('rDate').innerText = today;
+        // අද දිනය ස්වයංක්‍රීයව සැකසීම
+        const today = new Date();
+        const formattedDate = today.getFullYear() + "-" + (today.getMonth()+1).toString().padStart(2, '0') + "-" + today.getDate().toString().padStart(2, '0');
+        document.getElementById('rDate').innerText = formattedDate;
 
-        // දත්ත වාර්තාවට ඇතුළත් කිරීම
-        document.getElementById('rAmount').innerText = document.getElementById('colE').value;
-        document.getElementById('rAmt2').innerText = document.getElementById('colE').value;
+        // දත්ත පිරවීම
+        document.getElementById('rAmount').innerText = Number(document.getElementById('colE').value).toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rAmt2').innerText = Number(document.getElementById('colE').value).toLocaleString('en-US', {minimumFractionDigits: 2});
         document.getElementById('rBank').innerText = document.getElementById('colB').value;
-        document.getElementById('rCheck').innerText = document.getElementById('colJ').value;
-        document.getElementById('rReceipt').innerText = document.getElementById('colD').value;
+        document.getElementById('rBankDetails').innerText = "වෙතින්"; // අවශ්‍ය නම් බැංකු ගිණුම් අංකය මෙහි එක් කළ හැක
+        document.getElementById('rReceipt').innerText = document.getElementById('colJ').value; // චෙක්පත් අංකය
         document.getElementById('rInt').innerText = document.getElementById('colI').value;
         document.getElementById('rPeriod').innerText = document.getElementById('colF').value;
-        document.getElementById('rRate').innerText = document.getElementById('colH').value;
+        
+        // පොලී ප්‍රතිශතය % ලකුණ සහිතව
+        let rate = document.getElementById('colH').value;
+        document.getElementById('rRate').innerText = rate.includes('%') ? rate : rate + "%";
+        
         document.getElementById('rExp').innerText = document.getElementById('colG').value;
 
-        // ශුද්ධ පොලිය ගණනය (මුළු පොලිය - 7)
+        // ශුද්ධ පොලිය (පොලිය - 7)
         let totalInt = parseFloat(document.getElementById('colI').value) || 0;
         document.getElementById('rNet').innerText = (totalInt - 7).toFixed(2);
 
@@ -163,26 +177,45 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
+        
         if(actionName === 'searchData') {
-            params.append('colD', document.getElementById('searchId').value);
+            let sId = document.getElementById('searchId').value;
+            if(!sId) { alert("කරුණාකර රිසිට්පත් අංකය ඇතුළත් කරන්න!"); return; }
+            params.append('colD', sId);
         } else {
             fields.forEach(f => params.append(f, document.getElementById(f).value));
         }
         params.append('action', actionName);
 
-        let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
-        let text = await response.text();
         try {
-            let data = JSON.parse(text);
-            fields.forEach((f, i) => {
-                if(data[i]) document.getElementById(f).value = (i==2||i==6) ? new Date(data[i]).toISOString().split('T')[0] : data[i];
-            });
-            alert("Data Found!");
-        } catch(e) { alert(text); if(text.includes("success")) location.reload(); }
+            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+            let text = await response.text();
+            
+            try {
+                let data = JSON.parse(text);
+                if(actionName === 'searchData') {
+                    fields.forEach((f, i) => {
+                        let element = document.getElementById(f);
+                        if((i === 2 || i === 6) && data[i]) {
+                            element.value = new Date(data[i]).toISOString().split('T')[0];
+                        } else if (f === 'colH' && data[i]) {
+                            // පොලී ප්‍රතිශතය 0.075 ලෙස ඇත්නම් එය 7.5% ලෙස පෙන්වීමට
+                            let val = parseFloat(data[i]);
+                            element.value = (val < 1 && val > 0) ? (val * 100).toFixed(2) + "%" : data[i];
+                        } else {
+                            element.value = data[i] || "";
+                        }
+                    });
+                    alert("දත්ත සොයාගන්නා ලදී!");
+                }
+            } catch(e) {
+                if(text.toLowerCase().includes("success")) {
+                    alert("සාර්ථකයි!");
+                    if(actionName !== 'searchData') location.reload();
+                } else { alert("ප්‍රතිචාරය: " + text); }
+            }
+        } catch(err) { alert("දෝෂයකි: " + err.message); }
     }
 </script>
 </body>
 </html>
-
-
-
