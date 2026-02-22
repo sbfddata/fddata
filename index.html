@@ -10,15 +10,12 @@
         .container { background: white; max-width: 600px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        
         .search-container { background: #fffde7; padding: 15px; border: 1px solid #fbc02d; border-radius: 8px; margin-bottom: 20px; }
-        
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
         .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
         .add { background: #2ecc71; } 
         .edit { background: #3498db; } .delete { background: #e74c3c; }
-        
         #login-area { text-align: center; } #system-area { display: none; }
     </style>
 </head>
@@ -78,8 +75,8 @@
     <input type="date" id="colG" onchange="calculateDuration()">
     
     <label>ආයෝජන කාලය: </label>
-    <select id="colF" disabled>  
-        <option value="" selected>Investment period is automatically selected</option>
+    <select id="colF">  
+        <option value="" selected>තෝරන්න...</option>
         <option value="මාස 01">මාස 01කි </option>
         <option value="මාස 03">මාස 03කි </option>
         <option value="මාස 06">මාස 06කි </option>
@@ -102,7 +99,8 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUbAp5A9v16LhlzTMQkrv1agi7OqEPNgSa-CfU_CBs106TAlD4I5Cp5tJTjLHvqOaLUA/exec";
+    
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOzu1pMPRGSpmq6qAH1HPTrVCsiejjit6jIyyOnHwdhj5kR_uOGyFxdGpQVx71WE6uDg/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -117,11 +115,10 @@
         });
     }
 
-    
     function addPercentSymbol(input) {
         let val = input.value.trim();
-        if (val !== "" && !isNaN(val)) {
-            input.value = val + "%";
+        if (val !== "" && !isNaN(val.replace('%',''))) {
+            input.value = val.replace('%','') + "%";
         }
     }
 
@@ -134,20 +131,13 @@
             let diffTime = Math.abs(endDate - startDate);
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             
-            if (diffDays >= 28 && diffDays <= 32) {
-                durationSelect.value = "මාස 01";
-            } else if (diffDays >= 88 && diffDays <= 94) {
-                durationSelect.value = "මාස 03";
-            } else if (diffDays >= 175 && diffDays <= 184) {
-                durationSelect.value = "මාස 06";
-            } else {
-                durationSelect.value = ""; 
-            }
+            if (diffDays >= 25 && diffDays <= 35) durationSelect.value = "මාස 01";
+            else if (diffDays >= 85 && diffDays <= 95) durationSelect.value = "මාස 03";
+            else if (diffDays >= 170 && diffDays <= 190) durationSelect.value = "මාස 06";
         }
-    }
+    }    
 
     async function process(actionName) {
-        // අලුත් fields අනුපිළිවෙල: A සිට J දක්වා
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
         
@@ -170,21 +160,22 @@
                 if(actionName === 'searchData') {
                     fields.forEach((f, i) => {
                         let element = document.getElementById(f);
-                        if((i === 2 || i === 6) && data[i]) {
+                        if((i === 2 || i === 6) && data[i]) { // Dates
                             let dateVal = new Date(data[i]);
-                            if (!isNaN(dateVal)) {
-                                element.value = dateVal.toISOString().split('T')[0];
-                            }
+                            if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
                         } else {
                             element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
                         }
                     });
-                    calculateDuration(); 
                     alert("Data found!");
                 }
             } catch(e) {
-                alert("Response: " + text);
-                if(actionName !== 'searchData' && text.toLowerCase().includes("success")) location.reload();
+                if(text.toLowerCase().includes("success")) {
+                    alert("Operation Successful!");
+                    if(actionName !== 'searchData') location.reload();
+                } else {
+                    alert("Response: " + text);
+                }
             }
         } catch(err) {
             alert("Error!: " + err.message);
