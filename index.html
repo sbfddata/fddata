@@ -6,23 +6,24 @@
     <title>Investment System Pro - Padiyathalawa</title>
     <style>
         body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
-        .no-print-area { background: #90caf9; padding: 20px; text-align: center; }
+        .header { background: #90caf9; padding: 20px; text-align: center; font-size: 18pt; font-weight: bold; }
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; text-align: left; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
-        /* බොත්තම් පිහිටීම වෙනස් කිරීම - දැන් තීරු 2 ක Grid එකක් */
+        /* බොත්තම් සැකසුම */
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
+        button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; transition: 0.3s; }
         .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
-        
         .add { background: #2ecc71; } 
-        .delete { background: #e74c3c; } /* Edit තිබූ තැනට Delete පැමිණේ */
-        .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; } /* Delete තිබූ තැනට Print & Save පැමිණේ */
+        .delete { background: #e74c3c; }
+        .edit { background: #3498db; }
+        .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; }
         
         #login-area { text-align: center; } #system-area { display: none; }
+        hr { margin: 20px 0; border: 0; border-top: 1px solid #eee; }
 
-        /* Report Styles */
+        /* මුද්‍රණ වාර්තාවේ ස්ටයිල් */
         #report-area { display: none; background: white; width: 210mm; min-height: 297mm; margin: auto; padding: 15mm; box-sizing: border-box; }
         .bold { font-weight: bold; }
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
@@ -38,7 +39,7 @@
         @media print {
             @page { size: A4; margin: 0; }
             body { background: none; }
-            .no-print-area, .container { display: none !important; }
+            .header, .container { display: none !important; }
             #report-area { display: block !important; width: 100%; padding: 15mm; position: static; visibility: visible; }
             #report-area * { visibility: visible; }
         }
@@ -46,9 +47,7 @@
 </head>
 <body>
 
-<div class="no-print-area">
-    <h2>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය - පදියතලාව</h2>
-</div>
+<div class="header">සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය - පදියතලාව</div>
 
 <div id="login-area" class="container">
     <h3 style="color: purple;">LOGIN</h3>
@@ -58,23 +57,27 @@
 </div>
 
 <div id="system-area" class="container">
-    <div style="background: #fffde7; padding: 15px; border: 1px solid #fbc02d; border-radius: 8px;">
-        <label>සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න:</label>
-        <input type="text" id="searchId">
+    <h3 style="color: purple; text-align: center;">Investment Management Information System</h3>
+    
+    <div class="search-container">
+        <label>Enter receipt number:</label>
+        <input type="text" id="searchId" placeholder="Enter receipt number to search data">
         <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     </div>
 
+    <hr>
+
     <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
-    <select id="colA">
+    <select id="colA" required>
         <option value="" disabled selected hidden>Select Investment Account...</option>
-        <id="colA"><option value="පදියතලාව">පදියතලාව සමෘද්ධි බැංකුව</option>
-        <id="colA"><option value="පලේගම">පලේගම සමෘද්ධි බැංකුව</option>
+        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
+        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
         <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
-        <option value="මහ සංගම් අරමුදල">ණය සංරක්ෂණ අරමුදල්</option>
-        <option value="මහ සංගම් අරමුදල">සමුහ සංරක්ෂණ අරමුදල්</option>
+        <option value="ණය සංරක්ෂණ අරමුදල්">ණය සංරක්ෂණ අරමුදල්</option>
+        <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
     </select>
-    
-     <label>ආයෝජනය කළ බැංකුවේ නම:</label>
+
+    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
     <select id="colB" required>
         <option value="" disabled selected hidden>Select Bank...</option>
         <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
@@ -87,30 +90,38 @@
 
     <label>ආයෝජන කළ දිනය:</label>
     <input type="date" id="colC" onchange="calculateDuration()">
+
     <label>ආයෝජන රිසිට්පත් අංකය:</label>
     <input type="text" id="colD">
+
     <label>ආයෝජන මුදල (රු):</label>
-    <input type="number" id="colE">    
+    <input type="number" id="colE">   
+
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
-    <input type="date" id="colG" onchange="calculateDuration()">    
+    <input type="date" id="colG" onchange="calculateDuration()">
+    
     <label>ආයෝජන කාලය: </label>
-    <select id="colF" disabled>  
+    <select id="colF">  
         <option value="" selected>Investment period is automatically selected</option>
         <option value="මාස 01">මාස 01කි </option>
         <option value="මාස 03">මාස 03කි </option>
         <option value="මාස 06">මාස 06කි </option>
     </select>
-
+    
     <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
-    <input type="text" id="colH">
-    <label>ලද පොලිය (රු):</label>
+    <input type="text" id="colH" placeholder="Ex: 7" onblur="addPercentSymbol(this)">
+    
+    <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label>
     <input type="text" id="colI">
+
     <label>චෙක්පත් අංකය:</label>
     <input type="text" id="colJ">
 
     <div class="btn-grid">
-        <button class="add" onclick="process('addData')">Add</button>
-        <button class="delete" onclick="process('deleteData')">Delete</button> <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button> </div>
+        <button class="add" onclick="process('addData')">Data Add</button>
+        <button class="delete" onclick="process('deleteData')">Data Delete</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button>
+    </div>
 </div>
 
 <div id="report-area">
@@ -166,7 +177,8 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKhi0XEubegpu5HSl0BIQbAM_9GMvw8iqpRm9pn3_K7WvCO6eOM1NxuIdXqtclgFGvOQ/exec";
+    // ඔබ ලබාදුන් නව SCRIPT URL එක භාවිතා කර ඇත
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOzu1pMPRGSpmq6qAH1HPTrVCsiejjit6jIyyOnHwdhj5kR_uOGyFxdGpQVx71WE6uDg/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -176,11 +188,34 @@
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("Login Failed!"); }
+            } else { alert("Incorrect username or password!"); }
         });
     }
 
+    function addPercentSymbol(input) {
+        let val = input.value.trim();
+        if (val !== "" && !isNaN(val.replace('%',''))) {
+            input.value = val.replace('%','') + "%";
+        }
+    }
+
+    function calculateDuration() {
+        let startDate = new Date(document.getElementById('colC').value);
+        let endDate = new Date(document.getElementById('colG').value);
+        let durationSelect = document.getElementById('colF');
+        
+        if (!isNaN(startDate) && !isNaN(endDate)) {
+            let diffTime = Math.abs(endDate - startDate);
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            if (diffDays >= 25 && diffDays <= 35) durationSelect.value = "මාස 01";
+            else if (diffDays >= 85 && diffDays <= 95) durationSelect.value = "මාස 03";
+            else if (diffDays >= 170 && diffDays <= 190) durationSelect.value = "මාස 06";
+        }
+    }
+
     async function generateReport() {
+        // Print කිරීමට පෙර Save කිරීම
         await process('addData');
 
         document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
@@ -208,59 +243,50 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
-        if(actionName === 'searchData') { 
-            params.append('colD', document.getElementById('searchId').value); 
-        } else { 
-            fields.forEach(f => params.append(f, document.getElementById(f).value)); 
+        
+        if(actionName === 'searchData') {
+            let sId = document.getElementById('searchId').value;
+            if(!sId) { alert("Please enter the receipt number to search!"); return; }
+            params.append('colD', sId);
+        } else {
+            fields.forEach(f => params.append(f, document.getElementById(f).value));
         }
+        
         params.append('action', actionName);
 
         try {
             let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
             let text = await response.text();
+            
             try {
                 let data = JSON.parse(text);
-                fields.forEach((f, i) => {
-                    let element = document.getElementById(f);
-                    if((i === 2 || i === 6) && data[i]) {
-                        element.value = new Date(data[i]).toISOString().split('T')[0];
-                    } else if (f === 'colH' && data[i]) {
-                        let val = parseFloat(data[i]);
-                        element.value = (val < 1) ? (val * 100).toFixed(2) + "%" : data[i];
-                    } else {
-                        element.value = data[i] || "";
-                    }
-                });
-            } catch(e) { 
-                if(text.includes("success")) { 
-                    alert("සාර්ථකයි!"); 
+                if(actionName === 'searchData') {
+                    fields.forEach((f, i) => {
+                        let element = document.getElementById(f);
+                        if((i === 2 || i === 6) && data[i]) { 
+                            let dateVal = new Date(data[i]);
+                            if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
+                        } else {
+                            element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
+                        }
+                    });
+                    alert("Data found!");
+                }
+            } catch(e) {
+                if(text.toLowerCase().includes("success")) {
+                    alert("Operation Successful!");
+                    // Reload වීම වැළැක්වීමට location.reload() ඉවත් කර ඇත.
                     if(actionName !== 'searchData' && actionName !== 'addData') {
-                        fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
+                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
                     }
-                } else { alert(text); }
+                } else {
+                    alert("Response: " + text);
+                }
             }
-        } catch(err) { console.error("Error:", err); }
-    }
-    function calculateDuration() {
-        let startDate = new Date(document.getElementById('colC').value);
-        let endDate = new Date(document.getElementById('colG').value);
-        let durationSelect = document.getElementById('colF');
-        
-        if (!isNaN(startDate) && !isNaN(endDate)) {
-            let diffTime = Math.abs(endDate - startDate);
-            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            
-            if (diffDays >= 25 && diffDays <= 35) durationSelect.value = "මාස 01";
-            else if (diffDays >= 85 && diffDays <= 95) durationSelect.value = "මාස 03";
-            else if (diffDays >= 170 && diffDays <= 190) durationSelect.value = "මාස 06";
+        } catch(err) {
+            alert("Error!: " + err.message);
         }
-    }    
-
+    }
 </script>
 </body>
 </html>
-
-
-
-
-
