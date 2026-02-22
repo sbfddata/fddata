@@ -10,11 +10,16 @@
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; text-align: left; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        
+        /* බොත්තම් පිහිටීම වෙනස් කිරීම - දැන් තීරු 2 ක Grid එකක් */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; }
         .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
-        .add { background: #2ecc71; } .edit { background: #3498db; } .delete { background: #e74c3c; }
-        .print-btn { background: #9b59b6; grid-column: span 3; margin-top: 10px; }
+        
+        .add { background: #2ecc71; } 
+        .delete { background: #e74c3c; } /* Edit තිබූ තැනට Delete පැමිණේ */
+        .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; } /* Delete තිබූ තැනට Print & Save පැමිණේ */
+        
         #login-area { text-align: center; } #system-area { display: none; }
 
         /* Report Styles */
@@ -23,21 +28,12 @@
         .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
         .header-left { flex-basis: 50%; margin-top: 3.5em; text-align: left; }
         .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
-        .amunuma-container { text-align: right; width: 100%; margin-bottom: 20px; }
-        .amunuma { font-size: 14px; font-weight: bold; margin: 0; }
-        .samurdhi-details-right p, .manager-details-left p { margin: 0; padding: 0; line-height: 1.2; }
         .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 15px 0; }
         .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
         .data-table td, .investment-table td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
-        .data-table td:first-child, .investment-table td:first-child { width: 65%; }
-        .data-table td:nth-child(2), .investment-table td:nth-child(2) { width: 35%; text-align: right; font-family: 'Courier New', monospace; font-weight: bold; }
-
-        /* අත්සන් පේළි පෙළගැස්ම */
         .signature-section { display: flex; justify-content: space-between; margin-top: 40px; align-items: flex-start; width: 100%; }
         .sig-box-left { flex-basis: 50%; text-align: left; }
         .sig-box-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
-        .sig-content { width: fit-content; }
-        .sig-box-right p, .sig-box-left p { margin: 3px 0; }
 
         @media print {
             @page { size: A4; margin: 0; }
@@ -91,10 +87,7 @@
 
     <div class="btn-grid">
         <button class="add" onclick="process('addData')">Add</button>
-        <button class="edit" onclick="process('editData')">Edit</button>
-        <button class="delete" onclick="process('deleteData')">Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button>
-    </div>
+        <button class="delete" onclick="process('deleteData')">Delete</button> <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button> </div>
 </div>
 
 <div id="report-area">
@@ -103,34 +96,30 @@
             <p>කළමනාකරු,<br>සමෘද්ධි බැංකුව,<br>පදියතලාව.</p>
         </div>
         <div class="header-right">
-            <div class="amunuma-container"><h5 class="amunuma">ඇමුණුම 4</h5></div>
+            <div style="text-align: right; width: 100%; margin-bottom: 20px;"><h5 style="font-size: 14px; font-weight: bold; margin: 0;">ඇමුණුම 4</h5></div>
             <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span></p>
         </div>
     </div>
 
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rMainAmount"></span> පොලිය හා මුදල එවිමේ නිවේදනය</div>
-
     <p class="bold"><span id="rBankDisplay"></span> - <span id="rReceiptDisplay"></span></p>
 
     <p>ඉහත සඳහන් ආයෝජනයට අදාලව ලද පොලිය සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo" class="bold"></span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
     
-    <p>ඔබගේ දැන ගැනිම සඳහා පහත සඳහන් තොරතුරු දන්වා එවමු.</p>
-
     <table class="data-table">
-        <tr><td>1. අදාල ආයෝජනයට ලද මුළු පොලිය (රු)</td><td id="rTotalInt"></td></tr>
-        <tr><td>2. අඩු කලා සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td id="rDeductedInt"></td></tr>
-        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td id="rSentInt"></td></tr>
+        <tr><td style="width: 65%;">1. අදාල ආයෝජනයට ලද මුළු පොලිය (රු)</td><td style="width: 35%; text-align: right; font-weight: bold;" id="rTotalInt"></td></tr>
+        <tr><td>2. අඩු කලා සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rDeductedInt"></td></tr>
+        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rSentInt"></td></tr>
     </table>
 
     <p>තවද ඔබගේ ඉල්ලීම පරිදි ආයෝජනය කල මුදල චෙක්පත් අංක ................... මගින් එවමු / නැවත ආයෝජනය කල බව දන්වමු.</p>
 
     <table class="investment-table">
-        <tr><td>ආයෝජනය කල මුදල (රු):</td><td id="rAmtBottom"></td></tr>
-        <tr><td>ආයෝජනය වර්ගය:</td><td>ස්ථීර තැන්පතු</td></tr>
-        <tr><td>ආයෝජනය කල කාලය:</td><td id="rPeriodText"></td></tr>
-        <tr><td>ආයෝජනය කල පොලි ප්‍රතිශතය:</td><td id="rRateBottom"></td></tr>
-        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td id="rMaturityDate"></td></tr>
-        <tr><td>භාණ්ඩාගාර බිල්පතක් නම් එහි මුහුණත වටිනාකම:</td><td>0.00</td></tr>
+        <tr><td style="width: 65%;">ආයෝජනය කල මුදල (රු):</td><td style="width: 35%; text-align: right; font-weight: bold;" id="rAmtBottom"></td></tr>
+        <tr><td>ආයෝජනය වර්ගය:</td><td style="text-align: right; font-weight: bold;">ස්ථීර තැන්පතු</td></tr>
+        <tr><td>ආයෝජනය කල කාලය:</td><td style="text-align: right; font-weight: bold;" id="rPeriodText"></td></tr>
+        <tr><td>ආයෝජනය කල පොලි ප්‍රතිශතය:</td><td style="text-align: right; font-weight: bold;" id="rRateBottom"></td></tr>
+        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td style="text-align: right; font-weight: bold;" id="rMaturityDate"></td></tr>
     </table>
 
     <div class="signature-section">
@@ -142,7 +131,7 @@
             <p>දිනය: .................................</p>
         </div>
         <div class="sig-box-right">
-            <div class="sig-content">
+            <div style="width: fit-content;">
                 <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
                 <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
                 <p>නම: .......................................</p>
@@ -168,12 +157,9 @@
         });
     }
 
-    // දත්ත Save කර මුද්‍රණය කිරීම
     async function generateReport() {
-        // මුලින්ම Google Sheet එකට Save කිරීම
         await process('addData');
 
-        // වාර්තාව පිරවීම
         document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
         const amt = parseFloat(document.getElementById('colE').value) || 0;
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
@@ -225,7 +211,6 @@
             } catch(e) { 
                 if(text.includes("success")) { 
                     alert("සාර්ථකයි!"); 
-                    // මෙහි reload() ඉවත් කර ඇති නිසා Login පිටුවට නොයයි.
                     if(actionName !== 'searchData' && actionName !== 'addData') {
                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
                     }
