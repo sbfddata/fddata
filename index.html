@@ -74,13 +74,13 @@
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
     <input type="date" id="colG" onchange="calculateDuration()">
     
-    <label>ආයෝජන කාලය: </label>
-    <select id="colF">  
-        <option value="" selected>තෝරන්න...</option>
-        <option value="මාස 01">මාස 01කි </option>
-        <option value="මාස 03">මාස 03කි </option>
-        <option value="මාස 06">මාස 06කි </option>
-    </select>
+     <label>ආයෝජන කාලය: </label>
+    <select id="colF" disabled>  
+        <option value="" selected>Investment period is automatically selected</option>
+        <option value="මාස 01">මාස 01කි </option>
+        <option value="මාස 03">මාස 03කි </option>
+        <option value="මාස 06">මාස 06කි </option>
+    </select>
     
     <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
     <input type="text" id="colH" placeholder="Ex: 7" onblur="addPercentSymbol(this)">
@@ -184,3 +184,4 @@
 </script>
 </body>
 </html>
+
