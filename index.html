@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment System Pro - Padiyathalawa</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            margin: 0; 
+            padding: 0; 
+        }
+        .header { 
+            background: #90caf9; 
+            padding: 25px; 
+            text-align: center; 
+            font-size: 24px; 
+            font-weight: bold; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .container { 
+            background: white; 
+            max-width: 600px; 
+            margin: 30px auto; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        }
+        h3 {
+            margin-top: 0;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        .btn-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-top: 20px; 
+        }
+        button { 
+            padding: 14px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 6px; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 16px;
+            transition: opacity 0.3s;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .add { background: #2ecc71; } 
+        .search { background: #f1c40f; color: black; }
+        .edit { background: #3498db; } 
+        .delete { background: #e74c3c; }
+        
+        #login-area { text-align: center; } 
+        #system-area { display: none; }
+        
+        .login-icon {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය - පදියතලාව</div>
+
+<div id="login-area" class="container">
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Login" class="login-icon">
+    <h3 style="color: purple;">LOGIN</h3>
+    <input type="text" id="user" placeholder="පරිශීලක නාමය">
+    <input type="password" id="pass" placeholder="මුරපදය">
+    <button style="background: #00bcd4; width: 100%;" onclick="doLogin()">ඇතුළු වන්න</button>
+    <p style="font-size: 12px; color: #666; margin-top: 15px;">Forgot Your Password? <a href="#">Click here</a></p>
+</div>
+
+<div id="system-area" class="container">
+    <h3 style="color: purple;">ආයෝජන තොරතුරු පද්ධතිය</h3>
+    
+    <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
+    <select id="colA">
+        <option>1. පදියතලාව සමෘද්ධි බැංකුව</option>
+        <option>2. පල්ලේගම සමෘද්ධි බැංකුව</option>
+        <option>3. මහ සංගම් අරමුදල</option>
+        <option>4. ණය සංරක්ෂණ අරමුදල</option>
+        <option>5. සමූහ සංරක්ෂණ අරමුදල</option>
+    </select>
+
+    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
+    <select id="colB">
+        <option>1. ලංකා බැංකුව</option>
+        <option>2. මහජන බැංකුව</option>
+        <option>3. ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
+        <option>4. නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
+        <option>5. රාජ්‍ය උකස් හා ආයෝජන බැංකුව</option>
+        <option>6. ජාතික ඉතිරිකිරීමේ බැංකුව</option>
+    </select>
+
+    <label>ආයෝජන කළ දිනය:</label>
+    <input type="date" id="colC">
+
+    <label>ආයෝජන රිසිට්පත් අංකය:</label>
+    <input type="text" id="colD" placeholder="රිසිට්පත් අංකය ඇතුළත් කරන්න">
+
+    <label>ආයෝජන මුදල (රු):</label>
+    <input type="number" id="colE" placeholder="මුදල ඇතුළත් කරන්න">
+    
+    <label>ආයෝජන කාලය:</label>
+    <select id="colF">
+        <option value="මාස 01">මාස 01 (දින 28-32)</option>
+        <option value="මාස 03">මාස 03 (දින 88-94)</option>
+        <option value="මාස 06">මාස 06 (දින 175-184)</option>
+    </select>
+
+    <label>ආයෝජනය කල්පිරෙන දිනය:</label>
+    <input type="date" id="colG">
+
+    <label>ආයෝජනය සඳහා ලද පොලිය:</label>
+    <input type="text" id="colH" placeholder="පොලිය ඇතුළත් කරන්න">
+
+    <label>චෙක්පත් අංකය:</label>
+    <input type="text" id="colI" placeholder="චෙක්පත් අංකය ඇතුළත් කරන්න">
+
+    <div class="btn-grid">
+        <button class="add" onclick="process('addData')">Data Add</button>
+        <button class="search" onclick="process('searchData')">Data Search</button>
+        <button class="edit" onclick="process('editData')">Data Edit</button>
+        <button class="delete" onclick="process('deleteData')">Data Delete</button>
+    </div>
+</div>
+
+<script>
+    // ඔබ ලබාදුන් Web App URL එක
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUbAp5A9v16LhlzTMQkrv1agi7OqEPNgSa-CfU_CBs106TAlD4I5Cp5tJTjLHvqOaLUA/exec";
+
+    function doLogin() {
+        let u = document.getElementById('user').value;
+        let p = document.getElementById('pass').value;
+        
+        if(!u || !p) { alert("කරුණාකර නම සහ මුරපදය ඇතුළත් කරන්න."); return; }
+
+        fetch(`${SCRIPT_URL}?action=login&username=${u}&password=${p}`, {method: 'POST'})
+        .then(r => r.text()).then(res => {
+            if(res.trim() === "success") {
+                document.getElementById('login-area').style.display='none';
+                document.getElementById('system-area').style.display='block';
+            } else { 
+                alert("පරිශීලක නාමය හෝ මුරපදය වැරදියි!"); 
+            }
+        }).catch(err => alert("Error: " + err));
+    }
+
+    function process(actionName) {
+        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI'];
+        let params = `action=${actionName}`;
+        
+        fields.forEach(f => {
+            params += `&${f}=${encodeURIComponent(document.getElementById(f).value)}`;
+        });
+
+        // Search වලදී රිසිට්පත් අංකය (colD) අනිවාර්යයි
+        if((actionName === 'searchData' || actionName === 'deleteData' || actionName === 'editData') && !document.getElementById('colD').value) {
+            alert("කරුණාකර රිසිට්පත් අංකය ඇතුළත් කරන්න.");
+            return;
+        }
+
+        fetch(`${SCRIPT_URL}?${params}`, {method: 'POST'})
+        .then(r => r.json().catch(() => r.text()))
+        .then(res => {
+            if(actionName === 'searchData' && typeof res === 'object') {
+                fields.forEach((f, index) => {
+                    if((index === 2 || index === 6) && res[index]) { 
+                        // Date formatting for input type="date"
+                        let dateVal = new Date(res[index]);
+                        if(!isNaN(dateVal)) {
+                            document.getElementById(f).value = dateVal.toISOString().split('T')[0];
+                        }
+                    } else {
+                        document.getElementById(f).value = res[index] || "";
+                    }
+                });
+                alert("දත්ත සොයාගන්නා ලදී!");
+            } else {
+                alert("ප්‍රතිචාරය: " + res);
+                if(actionName === 'deleteData' || actionName === 'addData') {
+                    // Reset form or reload
+                    if(res.toLowerCase().includes("success") || res.toLowerCase().includes("added") || res.toLowerCase().includes("deleted")) {
+                        location.reload();
+                    }
+                }
+            }
+        }).catch(err => alert("සම්බන්ධතාවයේ දෝෂයකි: " + err));
+    }
+</script>
+</body>
+</html>
