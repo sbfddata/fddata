@@ -41,7 +41,7 @@
     <div class="search-container">
         <label>Enter receipt number:</label>
         <input type="text" id="searchId" placeholder="Enter receipt number to search data">
-        <button class="search-btn" onclick="process('searchData')">🔍 දත්ත සොයන්න (Data Search)</button>
+        <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     </div>
 
     <hr>
@@ -77,14 +77,14 @@
     <label>ආයෝජනය කල්පිරෙන දිනය:</label>
     <input type="date" id="colG" onchange="calculateDuration()">
     
-     <label>ආයෝජන කාලය: <span class="auto-calc">(දිනයන් අනුව ස්වයංක්‍රීයව තෝරා ගැනේ)</span></label>
-    <select id="colF">
-        <option value="">දිනයන් තෝරන්න...</option>
-        <option value="මාස 01">මාස 01කි (දින 28-32)</option>
-        <option value="මාස 03">මාස 03කි (දින 88-94)</option>
-        <option value="මාස 06">මාස 06කි (දින 175-184)</option>
-    </select>
-
+<label>ආයෝජන කාලය: </label>
+<select id="colF" disabled>
+    <option value="">දිනයන් තෝරන්න...</option>
+    <option value="මාස 01">මාස 01කි </option>
+    <option value="මාස 03">මාස 03කි </option>
+    <option value="මාස 06">මාස 06කි </option>
+</select>
+    
     <label>ආයෝජනය සඳහා ලද පොලිය:</label>
     <input type="text" id="colH">
 
@@ -180,4 +180,5 @@
 </script>
 </body>
 </html>
+
 
