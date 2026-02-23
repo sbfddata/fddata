@@ -23,16 +23,11 @@
         #login-area { text-align: center; } #system-area { display: none; }
 
         /* Report Layouts */
-        #report-area, #list-report-area { display: none; background: white; width: 297mm; min-height: 210mm; margin: auto; padding: 15mm; box-sizing: border-box; color: black; }
-        .report-header-flex { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        #report-area, #list-report-area { display: none; background: white; margin: auto; padding: 15mm; color: black; }
         .title-underlined { text-align: center; font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 10px; }
-        
-        .list-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; table-layout: fixed; }
-        .list-table th, .list-table td { border: 1px solid #000; padding: 5px; text-align: center; }
-        .list-table th { background-color: #f9f9f9; }
-
-        .sig-container { display: flex; justify-content: space-between; margin-top: 50px; font-size: 10pt; }
-        .sig-box { width: 45%; }
+        .list-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+        .list-table th, .list-table td { border: 1px solid #000; padding: 4px; text-align: center; }
+        .sig-container { display: flex; justify-content: space-between; margin-top: 50px; }
 
         @media print {
             @page { size: A4 landscape; margin: 5mm; }
@@ -48,8 +43,8 @@
 
 <div id="login-area" class="container">
     <h3 style="color: purple;">LOGIN</h3>
-    <input type="text" id="user" placeholder="UserName">
-    <input type="password" id="pass" placeholder="Password">
+    <input type="text" id="user" placeholder="පරිශීලක නාමය">
+    <input type="password" id="pass" placeholder="මුරපදය">
     <button style="background: #00bcd4; width: 100%;" onclick="doLogin()">Login</button>
 </div>
 
@@ -60,16 +55,27 @@
     <hr>
     
     <label>ගිණුමේ නම:</label>
-    <select id="colA"><option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option><option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option></select>
+    <select id="colA">
+        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
+        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
+        <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
+    </select>
 
     <label>ආයෝජිත බැංකුව:</label>
-    <select id="colB"><option value="මහජන බැංකුව">මහජන බැංකුව</option><option value="ලංකා බැංකුව">ලංකා බැංකුව</option></select>
+    <select id="colB">
+        <option value="මහජන බැංකුව">මහජන බැංකුව</option>
+        <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
+    </select>
 
     <label>දිනය:</label><input type="date" id="colC">
     <label>රිසිට්පත් අංකය:</label><input type="text" id="colD">
     <label>මුදල (රු):</label><input type="number" id="colE">
     <label>කල්පිරෙන දිනය:</label><input type="date" id="colG">
-    <label>කාලය:</label><select id="colF"><option value="මාස 03">මාස 03</option><option value="මාස 06">මාස 06</option></select>
+    <label>කාලය:</label>
+    <select id="colF">
+        <option value="මාස 03">මාස 03</option>
+        <option value="මාස 06">මාස 06</option>
+    </select>
     <label>පොලී %:</label><input type="text" id="colH">
     <label>ලද පොලිය (රු):</label><input type="number" id="colI">
     <label>චෙක්පත් අංකය:</label><input type="text" id="colJ">
@@ -77,38 +83,37 @@
     <div class="btn-grid">
         <button class="add" onclick="process('addData')">Data Add</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save (Attch 4)</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print (Attch 4)</button>
         <button class="list-btn" onclick="generatePrintList()">📋 Print List (Attch 5)</button>
         <button class="clear-btn" onclick="clearPrintList()">🧹 Clear List</button>
     </div>
 </div>
 
 <div id="list-report-area">
-    <div class="report-header-flex">
-        <div>කළමනාකරු,<br>සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව.</div>
-        <div style="text-align: right;">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="lCurrentDate"></span></div>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="font-size: 10pt;">කළමනාකරු,<br>සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව.</div>
+        <div style="text-align: right; font-size: 10pt;">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="lDateDisplay"></span></div>
     </div>
-
     <div class="title-underlined">කරන ලද ආයෝජන පොලිය හා මුදල එවිමේ නිවේදනය</div>
-    <p style="font-size: 10pt;">පහත සඳහන් ආයෝජන මුදල් වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="lCheckDisplay" style="font-weight:bold;"></span> දරණ චෙක්පත මඟින් අමුණා එවමු.</p>
+    <p style="font-size: 10pt; text-align: center;">පහත සඳහන් ආයෝජන මුදල් වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="lCheckDisplay" style="font-weight:bold;"></span> දරණ චෙක්පත මඟින් අමුණා එවමු.</p>
     
     <table class="list-table">
         <thead>
             <tr>
-                <th rowspan="2" style="width:25px;">අංකය</th>
+                <th rowspan="2">අංකය</th>
                 <th colspan="3">කල්පිරුණු ආයෝජන පිළිබඳ විස්තර</th>
                 <th colspan="3">පොලී විස්තර</th>
                 <th colspan="6">නැවත ආයෝජන පිළිබඳ විස්තර</th>
             </tr>
             <tr>
-                <th>ආයෝජන මුදල (රු)</th>
-                <th>ආයෝජනය කළ බැංකුව</th>
-                <th>ආයෝජන රිසිට්පත් අංකය</th>
-                <th>අදාල මුළු පොලිය</th>
-                <th>රඳවාගත් 7% පොලිය</th>
-                <th>එවන පොලි මුදල</th>
-                <th>නැවත ආයෝජිත දිනය</th>
-                <th>නැවත ආයෝජිත මුදල</th>
+                <th>ආයෝජන මුදල</th>
+                <th>ආයෝජිත බැංකුව</th>
+                <th>රිසිට්පත් අංකය</th>
+                <th>මුළු පොලිය</th>
+                <th>7% පොලිය</th>
+                <th>එවන පොලිය</th>
+                <th>දිනය</th>
+                <th>මුදල</th>
                 <th>වර්ගය</th>
                 <th>කාලය</th>
                 <th>පොලී %</th>
@@ -119,104 +124,78 @@
     </table>
 
     <div class="sig-container">
-        <div class="sig-box">
-            ගිණුම් ලිපිකරු<br>සමෘද්ධි මහ සංගමය/මූලස්ථාන කළමනාකරු<br>නම:................................................<br>අත්සන:...........................................<br>දිනය:..............................................
-        </div>
-        <div class="sig-box" style="text-align: left; padding-left: 50px;">
-            බලයලත් නිලධාරී සමෘද්ධි බැංකු මහ සංගමය/ප්‍රාදේශීය ලේකම්<br>නම:................................................<br>අත්සන:...........................................<br>දිනය:..............................................
-        </div>
+        <div style="font-size: 9pt;">ගිණුම් ලිපිකරු<br>සමෘද්ධි මහ සංගමය/මූලස්ථාන කළමනාකරු<br>නම:................................................<br>අත්සන:...........................................</div>
+        <div style="font-size: 9pt; text-align: right;">බලයලත් නිලධාරී සමෘද්ධි බැංකු මහ සංගමය<br>නම:................................................<br>අත්සන:...........................................</div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "ඔබේ_SCRIPT_URL_එක_මෙතැනට_යොදන්න";
+    const SCRIPT_URL = "ඔබේ_DEPLOY_URL_එක_මෙතැනට_දමන්න";
 
-    function doLogin() {
+    async function doLogin() {
         let u = document.getElementById('user').value, p = document.getElementById('pass').value;
-        fetch(`${SCRIPT_URL}?action=login&username=${u}&password=${p}`, {method: 'POST'})
-        .then(r => r.text()).then(res => {
-            if(res.trim() === "success") { document.getElementById('login-area').style.display='none'; document.getElementById('system-area').style.display='block'; }
-            else { alert("Login Failed!"); }
-        });
+        const res = await fetch(`${SCRIPT_URL}?action=login&username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`, {method: 'POST'});
+        const text = await res.text();
+        if(text.trim() === "success") {
+            document.getElementById('login-area').style.display='none';
+            document.getElementById('system-area').style.display='block';
+        } else { alert("Login Failed! කරුණාකර නැවත උත්සාහ කරන්න."); }
     }
 
     async function process(actionName) {
         let params = new URLSearchParams();
-        if(actionName === 'searchData') { params.append('colD', document.getElementById('searchId').value); }
-        else { ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'].forEach(f => params.append(f, document.getElementById(f).value)); }
+        if(actionName === 'searchData') {
+            params.append('colD', document.getElementById('searchId').value);
+        } else {
+            ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'].forEach(f => params.append(f, document.getElementById(f).value));
+        }
         params.append('action', actionName);
-        
-        let res = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
-        let text = await res.text();
+        const res = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+        const text = await res.text();
         
         if(actionName === 'searchData' && text !== "notfound") {
-            let data = JSON.parse(text);
-            document.getElementById('colA').value = data[0];
-            document.getElementById('colB').value = data[1];
-            document.getElementById('colC').value = data[2] ? new Date(data[2]).toISOString().split('T')[0] : "";
-            document.getElementById('colD').value = data[3];
-            document.getElementById('colE').value = data[4];
-            document.getElementById('colF').value = data[5];
-            document.getElementById('colG').value = data[6] ? new Date(data[6]).toISOString().split('T')[0] : "";
-            document.getElementById('colH').value = data[7];
-            document.getElementById('colI').value = data[8];
-            document.getElementById('colJ').value = data[9];
+            const d = JSON.parse(text);
+            document.getElementById('colA').value = d[0]; document.getElementById('colB').value = d[1];
+            document.getElementById('colC').value = d[2] ? new Date(d[2]).toISOString().split('T')[0] : "";
+            document.getElementById('colD').value = d[3]; document.getElementById('colE').value = d[4];
+            document.getElementById('colF').value = d[5];
+            document.getElementById('colG').value = d[6] ? new Date(d[6]).toISOString().split('T')[0] : "";
+            document.getElementById('colH').value = d[7]; document.getElementById('colI').value = d[8];
+            document.getElementById('colJ').value = d[9];
             alert("දත්ත හමුවිය!");
         } else if(text.includes("success")) { alert("සාර්ථකයි!"); }
     }
 
     async function generatePrintList() {
         const acc = document.getElementById('colA').value;
-        document.getElementById('lCurrentDate').innerText = new Date().toISOString().split('T')[0];
+        document.getElementById('lDateDisplay').innerText = new Date().toLocaleDateString();
         document.getElementById('lCheckDisplay').innerText = document.getElementById('colJ').value || ".........";
-
-        let resp = await fetch(`${SCRIPT_URL}?action=getPrintList`);
-        let data = await resp.json();
-        let tbody = document.getElementById('list-table-body');
-        tbody.innerHTML = "";
         
-        let t1=0, t2=0, t3=0, count=0;
+        const resp = await fetch(`${SCRIPT_URL}?action=getPrintList`);
+        const data = await resp.json();
+        let tbody = document.getElementById('list-table-body'), t1=0, t2=0, t3=0, count=0;
+        tbody.innerHTML = "";
 
-        data.forEach((row) => {
+        data.forEach(row => {
             if(row[0] === acc) {
                 count++;
                 let inv = parseFloat(row[4]) || 0, intr = parseFloat(row[8]) || 0;
                 let tax = intr * 0.07, net = intr - tax;
                 t1+=intr; t2+=tax; t3+=net;
-
-                tbody.innerHTML += `<tr>
-                    <td>${count}</td>
-                    <td style="text-align:right">${inv.toLocaleString()}</td>
-                    <td>${row[1]}</td>
-                    <td>${row[3]}</td>
-                    <td style="text-align:right">${intr.toFixed(2)}</td>
-                    <td style="text-align:right">${tax.toFixed(2)}</td>
-                    <td style="text-align:right">${net.toFixed(2)}</td>
-                    <td>${row[2] ? new Date(row[2]).toISOString().split('T')[0] : ""}</td>
-                    <td style="text-align:right">${inv.toLocaleString()}</td>
-                    <td>ස්ථීර</td>
-                    <td>${row[5]}</td>
-                    <td>${row[7]}</td>
-                    <td>${row[6] ? new Date(row[6]).toISOString().split('T')[0] : ""}</td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>${count}</td><td>${inv.toLocaleString()}</td><td>${row[1]}</td><td>${row[3]}</td><td>${intr.toFixed(2)}</td><td>${tax.toFixed(2)}</td><td>${net.toFixed(2)}</td><td>${new Date(row[2]).toLocaleDateString()}</td><td>${inv.toLocaleString()}</td><td>ස්ථීර</td><td>${row[5]}</td><td>${row[7]}</td><td>${new Date(row[6]).toLocaleDateString()}</td></tr>`;
             }
         });
-
+        
         if(count > 0) {
-            tbody.innerHTML += `<tr style="font-weight:bold; background:#eee"><td colspan="4">එකතුව</td><td style="text-align:right">${t1.toFixed(2)}</td><td style="text-align:right">${t2.toFixed(2)}</td><td style="text-align:right">${t3.toFixed(2)}</td><td colspan="6"></td></tr>`;
-            document.getElementById('system-area').style.display = 'none';
-            document.getElementById('list-report-area').style.display = 'block';
+            tbody.innerHTML += `<tr style="font-weight:bold; background:#eee"><td colspan="4">එකතුව</td><td>${t1.toFixed(2)}</td><td>${t2.toFixed(2)}</td><td>${t3.toFixed(2)}</td><td colspan="6"></td></tr>`;
+            document.getElementById('system-area').style.display='none';
+            document.getElementById('list-report-area').style.display='block';
             window.print();
-            location.reload(); 
-        } else { alert("දත්ත නැත!"); }
+            setTimeout(() => location.reload(), 1000);
+        } else { alert("මුද්‍රණය කිරීමට දත්ත නොමැත!"); }
     }
 
-    function generateReport() {
-        // Attachment 4 කේතය මෙහි තිබිය යුතුය (පෙර ලබා දුන් ආකාරයටම)
-        alert("Attachment 4 සකස් වෙමින් පවතී...");
-        window.print();
-    }
-
+    function generateReport() { window.print(); }
     async function clearPrintList() { if(confirm("ලැයිස්තුව මකන්නද?")) { await fetch(`${SCRIPT_URL}?action=clearPrintSheet`, {method: 'POST'}); alert("මකා දමන ලදී."); } }
 </script>
 </body>
