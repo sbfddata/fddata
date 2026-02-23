@@ -1,154 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
     <meta charset="UTF-8">
-    <title>Samaurdhi Investment System</title>
+    <title>Investment System Dashboard</title>
     <style>
-        body { font-family: 'Arial', sans-serif; font-size: 11pt; background: #f0f2f5; }
-        .no-print { max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 4px; border: 1px solid #ccc; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .add { background: #27ae60; color: white; }
-        .print4 { background: #8e44ad; color: white; }
-        .print5 { background: #2c3e50; color: white; }
+        :root { --primary: #2c3e50; --secondary: #34495e; --accent: #27ae60; --danger: #e74c3c; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; margin: 0; }
+        .login-box { width: 350px; padding: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 10px; box-shadow: 0 15px 25px rgba(0,0,0,0.2); text-align: center; }
+        .hidden { display: none; }
+        .dashboard { padding: 20px; max-width: 1200px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .btn-group { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; transition: 0.3s; }
+        .btn-add { background: var(--accent); }
+        .btn-clear { background: #f39c12; }
+        .btn-del { background: var(--danger); }
+        .btn-print { background: #3498db; }
         
-        /* Reports Styling */
-        #attch4, #attch5 { display: none; background: white; padding: 20mm; color: black; }
-        .report-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-        th, td { border: 1px solid black; padding: 5px; text-align: center; }
-        .title { text-align: center; font-weight: bold; text-decoration: underline; font-size: 14pt; margin: 15px 0; }
-
+        /* Print Styles */
         @media print {
             .no-print { display: none; }
-            #attch4, #attch5 { display: block; }
-            @page { size: A4 landscape; margin: 5mm; }
-            .portrait-page { @page { size: A4 portrait; } }
+            .print-only { display: block !important; }
         }
     </style>
 </head>
 <body>
 
-<div id="login-screen" class="no-print">
-    <h2 style="text-align:center">LOGIN</h2>
-    <input type="text" id="user" placeholder="Username">
-    <input type="password" id="pass" placeholder="Password">
-    <button onclick="login()" style="background:#008080; color:white">Login</button>
+<div id="login-section" class="login-box">
+    <h2>Investment System</h2>
+    <input type="text" id="username" placeholder="පරිශීලක නාමය"><br><br>
+    <input type="password" id="password" placeholder="මුරපදය"><br><br>
+    <button class="btn-add" style="width:100%" onclick="handleLogin()">ඇතුළු වන්න</button>
 </div>
 
-<div id="main-system" class="no-print" style="display:none">
-    <input type="text" id="sId" placeholder="සෙවීමට රිසිට්පත් අංකය">
-    <button onclick="search()">🔍 Search</button>
-    <hr>
-    <label>බැංකුව:</label><select id="a"><option>පදියතලාව සමෘද්ධි බැංකුව</option></select>
-    <label>ආයෝජිත බැංකුව:</label><input type="text" id="b">
-    <label>දිනය:</label><input type="date" id="c">
-    <label>රිසිට්පත් අංකය:</label><input type="text" id="d">
-    <label>මුදල:</label><input type="number" id="e">
-    <label>කාලය:</label><input type="text" id="f">
-    <label>කල්පිරෙන දිනය:</label><input type="date" id="g">
-    <label>පොලී %:</label><input type="text" id="h">
-    <label>ලද පොලිය:</label><input type="number" id="i">
-    <label>චෙක්පත් අංකය:</label><input type="text" id="j">
-
-    <div class="btn-grid">
-        <button class="add" onclick="save()">Data Add</button>
-        <button class="print4" onclick="print4()">Print (Attch 4)</button>
-        <button class="print5" onclick="print5()">Print List (Attch 5)</button>
-        <button onclick="clearL()" style="grid-column: span 2; background:#7f8c8d; color:white">Clear List</button>
-    </div>
-</div>
-
-<div id="attch4" class="portrait-page">
-    <div class="report-header">
-        <div>කළමනාකරු,<br><span id="p4_acc"></span>.</div>
-        <div style="text-align:right">ඇමුණුම 4<br>දිනය: <span id="p4_date"></span></div>
-    </div>
-    <div class="title">ආයෝජන මුදල හා පොලිය එවීම</div>
-    <p>ඉහත ආයෝජනයට අදාළව <span id="p4_check" style="font-weight:bold"></span> දරණ චෙක්පත මඟින් මුදල් එවමු.</p>
+<div id="dashboard-section" class="dashboard hidden">
+    <div class="card no-print">
+        <h3>දත්ත ඇතුළත් කිරීම් (FD Data Entry)</h3>
+        <div class="grid-inputs">
+            <input type="text" id="bankName" placeholder="ආයෝජන මුදල අයත් බැංකුව">
+            <input type="text" id="investBank" placeholder="ආයෝජනය කළ බැංකුව">
+            <input type="date" id="date">
+            <input type="text" id="receiptNo" placeholder="රිසිට්පත් අංකය">
+            <input type="number" id="amount" placeholder="ආයෝජන මුදල (රු)">
+            <input type="text" id="period" placeholder="කාලය (මාස)">
+            <input type="date" id="matureDate" placeholder="කල්පිරෙන දිනය">
+            <input type="text" id="rate" placeholder="පොලී ප්‍රතිශතය %">
+            <input type="number" id="interest" placeholder="ලැබෙන පොලිය">
+            <input type="text" id="chequeNo" placeholder="චෙක්පත් අංකය">
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn-add" onclick="saveData()">Add Data (ඇතුළත් කරන්න)</button>
+            <button class="btn-clear" onclick="clearPrint()">Clear Data (මුද්‍රණ පිටුව මකන්න)</button>
+            <button class="btn-del" onclick="deleteItem()">Delete (සෙවුම් කර මකන්න)</button>
+            <button class="btn-print" onclick="window.print()">Print List (වාර්තාව)</button>
+        </div>
     </div>
 
-<div id="attch5">
-    <div class="report-header">
-        <div>කළමනාකරු,<br>සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව.</div>
-        <div style="text-align:right">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="p5_date"></span></div>
-    </div>
-    <div class="title">කරන ලද ආයෝජන පොලිය හා මුදල එවිමේ නිවේදනය</div>
-    <p style="text-align:center">පහත සඳහන් ආයෝජන මුදල් වලට අදාලව <span id="p5_check" style="font-weight:bold"></span> දරණ චෙක්පත මඟින් අමුණා එවමු.</p>
-    <table id="p5_table">
-        <thead>
-            <tr>
-                <th rowspan="2">අංකය</th><th colspan="3">කල්පිරුණු ආයෝජන</th><th colspan="3">පොලී විස්තර</th><th colspan="6">නැවත ආයෝජන</th>
-            </tr>
-            <tr>
-                <th>මුදල</th><th>බැංකුව</th><th>රිසිට්පත</th><th>මුළු පොලිය</th><th>7% බද්ද</th><th>ශුද්ධ පොලිය</th><th>දිනය</th><th>මුදල</th><th>වර්ගය</th><th>කාලය</th><th>පොලී %</th><th>කල්පිරෙන දිනය</th>
-            </tr>
-        </thead>
-        <tbody id="p5_body"></tbody>
-    </table>
-    <div style="display:flex; justify-content:space-between; margin-top:40px">
-        <div>ගිණුම් ලිපිකරු<br>අත්සන:......................</div>
-        <div>බලයලත් නිලධාරී<br>අත්සන:......................</div>
+    <div id="print-area" class="card">
+        <div style="text-align: right;">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය: 2025-04-07</div>
+        <h4 style="text-align: center; text-decoration: underline;">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</h4>
+        <table border="1" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+                <tr>
+                    <th>ආයෝජන මුදල</th>
+                    <th>බැංකුව</th>
+                    <th>රිසිට්පත් අංකය</th>
+                    <th>පොලිය</th>
+                    <th>කල්පිරෙන දිනය</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body">
+                </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    const URL = "https://script.google.com/macros/s/AKfycbwM3j8A4oy8nVqC7zycyuGonaK2SzfywxLGaS9-rxWpJkPqf8ta9E_oiKIl1oc-1LkNig/exec";
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbz7a46Bnu6eOocYlH8HjmFB7nM6zfx7pCX8W83qbTQ1hWCg3WTfAc6Ym-9N7ohn_fZnvQ/exec";
 
-    async function login() {
-        const res = await fetch(`${URL}?action=login&username=${document.getElementById('user').value}&password=${document.getElementById('pass').value}`, {method:'POST'});
-        const text = await res.text();
-        if(text.trim()==="success") { document.getElementById('login-screen').style.display='none'; document.getElementById('main-system').style.display='block'; }
-        else alert("Login Failed!");
+    function handleLogin() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        // සරල පරීක්ෂාව - සත්‍ය පද්ධතියකදී Google Script එකට යැවිය යුතුය
+        if(u === "Gamini" && p === "900000000") {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+        } else { alert("මුරපදය වැරදියි!"); }
     }
 
-    async function search() {
-        const res = await fetch(`${URL}?action=searchData&colD=${document.getElementById('sId').value}`, {method:'POST'});
-        const d = await res.json();
-        if(d) {
-            document.getElementById('b').value = d[1];
-            document.getElementById('c').value = new Date(d[2]).toISOString().split('T')[0];
-            document.getElementById('d').value = d[3];
-            document.getElementById('e').value = d[4];
-            document.getElementById('f').value = d[5];
-            document.getElementById('g').value = new Date(d[6]).toISOString().split('T')[0];
-            document.getElementById('h').value = d[7];
-            document.getElementById('i').value = d[8];
-            document.getElementById('j').value = d[9];
-        }
+    function saveData() {
+        const formData = {
+            bankName: document.getElementById('bankName').value,
+            receiptNo: document.getElementById('receiptNo').value,
+            amount: document.getElementById('amount').value
+            // අනෙක් සියලු fields මෙලෙස එකතු කරන්න
+        };
+        
+        // Google Script එකට දත්ත යැවීම
+        google.script.run.withSuccessHandler(() => {
+            alert("දත්ත සාර්ථකව ඇතුළත් විය!");
+            updatePrintTable(formData);
+        }).addFDData(formData);
     }
 
-    async function save() {
-        let p = new URLSearchParams();
-        ['a','b','c','d','e','f','g','h','i','j'].forEach(k => p.append('col'+k.toUpperCase(), document.getElementById(k).value));
-        p.append('action', 'addData');
-        await fetch(`${URL}?${p.toString()}`, {method:'POST'});
-        alert("Saved!");
+    function clearPrint() {
+        google.script.run.withSuccessHandler(() => {
+            document.getElementById('print-table-body').innerHTML = "";
+            alert("මුද්‍රණ පිටුව පිරිසිදු කරන ලදී.");
+        }).clearPrintSheet();
     }
-
-    async function print5() {
-        const res = await fetch(`${URL}?action=getPrintList`);
-        const data = await res.json();
-        let body = document.getElementById('p5_body');
-        body.innerHTML = "";
-        data.forEach((r, idx) => {
-            let tax = r[8] * 0.07;
-            body.innerHTML += `<tr><td>${idx+1}</td><td>${r[4]}</td><td>${r[1]}</td><td>${r[3]}</td><td>${r[8]}</td><td>${tax.toFixed(2)}</td><td>${(r[8]-tax).toFixed(2)}</td><td>${r[2]}</td><td>${r[4]}</td><td>ස්ථීර</td><td>${r[5]}</td><td>${r[7]}</td><td>${r[6]}</td></tr>`;
-        });
-        document.getElementById('p5_check').innerText = document.getElementById('j').value;
-        document.getElementById('p5_date').innerText = new Date().toLocaleDateString();
-        window.print();
-    }
-
-    function print4() {
-        document.getElementById('p4_acc').innerText = document.getElementById('a').value;
-        document.getElementById('p4_date').innerText = new Date().toLocaleDateString();
-        document.getElementById('p4_check').innerText = document.getElementById('j').value;
-        window.print();
-    }
-
-    async function clearL() { if(confirm("Clear?")) await fetch(`${URL}?action=clearPrintSheet`, {method:'POST'}); }
 </script>
 </body>
 </html>
-
