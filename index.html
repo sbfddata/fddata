@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment System Pro - Padiyathalawa</title>
     <style>
-        body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
+        body { font-family: sans-serif; font-size: 11pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background: #90caf9; padding: 20px; text-align: center; font-size: 18pt; font-weight: bold; }
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; text-align: left; }
@@ -16,29 +16,27 @@
         .search-btn { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
         .add { background: #2ecc71; } 
         .delete { background: #e74c3c; }
-        .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; }
+        .print-btn { background: #9b59b6; }
+        .list-btn { background: #34495e; }
+        .clear-btn { background: #95a5a6; grid-column: span 2; margin-top: 5px; }
         
         #login-area { text-align: center; } #system-area { display: none; }
-        hr { margin: 20px 0; border: 0; border-top: 1px solid #eee; }
 
         /* Report Styles */
-        #report-area { display: none; background: white; width: 210mm; min-height: 297mm; margin: auto; padding: 15mm; box-sizing: border-box; }
-        .bold { font-weight: bold; }
-        .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
-        .header-left { flex-basis: 50%; margin-top: 3.5em; text-align: left; }
-        .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
-        .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 15px 0; }
-        .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
-        .data-table td, .investment-table td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
-        .signature-section { display: flex; justify-content: space-between; margin-top: 40px; align-items: flex-start; width: 100%; }
-        .sig-box-left { flex-basis: 50%; text-align: left; }
-        .sig-box-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
+        #report-area, #list-report-area { display: none; background: white; width: 297mm; min-height: 210mm; margin: auto; padding: 10mm; box-sizing: border-box; }
+        .list-title { font-size: 15pt; font-weight: bold; text-align: center; text-decoration: underline; margin-bottom: 15px; }
+        
+        .list-table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; }
+        .list-table th, .list-table td { border: 1px solid #000; padding: 4px; text-align: center; word-wrap: break-word; }
+        .list-table th { background-color: #f2f2f2; }
+
+        .signature-section { display: flex; justify-content: space-between; margin-top: 40px; }
 
         @media print {
-            @page { size: A4; margin: 0; }
+            @page { size: A4 landscape; margin: 5mm; }
             body { background: none; }
             .header, .container { display: none !important; }
-            #report-area { display: block !important; width: 100%; padding: 15mm; position: static; visibility: visible; }
+            #list-report-area { display: block !important; width: 100%; }
         }
     </style>
 </head>
@@ -54,19 +52,13 @@
 </div>
 
 <div id="system-area" class="container">
-    <h3 style="color: purple; text-align: center;">Investment Management Information System</h3>
-    
-    <div class="search-container">
-        <label>Enter receipt number:</label>
-        <input type="text" id="searchId" placeholder="Enter receipt number to search data">
-        <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
-    </div>
-
+    <h3 style="color: purple; text-align: center;">Investment Management</h3>
+    <input type="text" id="searchId" placeholder="සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න">
+    <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     <hr>
-
-    <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
-    <select id="colA" required>
-        <option value="" disabled selected hidden>Select Investment Account...</option>
+    
+    <label>ගිණුමේ නම:</label>
+    <select id="colA">
         <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
         <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
         <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
@@ -74,107 +66,71 @@
         <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
     </select>
 
-    <label>ආයෝජනය කළ බැංකුවේ නම:</label>
-    <select id="colB" required>
-        <option value="" disabled selected hidden>Select Bank...</option>
+    <label>ආයෝජිත බැංකුව:</label>
+    <select id="colB">
         <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
         <option value="මහජන බැංකුව">මහජන බැංකුව</option>
         <option value="ප්‍රාදේශීය සංවර්ධන බැංකුව">ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
-        <option value="නිවාස සංවර්ධන මූල්‍ය සංස්ථාව">නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
-        <option value="රාජ්‍ය උකස් හා ආයෝජන බැංකුව">රාජ්‍ය උකස් හා ආයෝජන බැංකුව</option>
         <option value="ජාතික ඉතිරිකිරීමේ බැංකුව">ජාතික ඉතිරිකිරීමේ බැංකුව</option>
     </select>
 
-    <label>ආයෝජන කළ දිනය:</label>
-    <input type="date" id="colC" onchange="calculateDuration()">
-
-    <label>ආයෝජන රිසිට්පත් අංකය:</label>
-    <input type="text" id="colD">
-
-    <label>ආයෝජන මුදල (රු):</label>
-    <input type="number" id="colE">   
-
-    <label>ආයෝජනය කල්පිරෙන දිනය:</label>
-    <input type="date" id="colG" onchange="calculateDuration()">
-    
-    <label>ආයෝජන කාලය: </label>
-    <select id="colF">  
-        <option value="" selected>Investment period is automatically selected</option>
-        <option value="මාස 01">මාස 01කි </option>
-        <option value="මාස 03">මාස 03කි </option>
-        <option value="මාස 06">මාස 06කි </option>
+    <label>දිනය:</label><input type="date" id="colC" onchange="calculateDuration()">
+    <label>රිසිට්පත් අංකය:</label><input type="text" id="colD">
+    <label>මුදල (රු):</label><input type="number" id="colE">
+    <label>කල්පිරෙන දිනය:</label><input type="date" id="colG" onchange="calculateDuration()">
+    <label>කාලය:</label>
+    <select id="colF">
+        <option value="මාස 01">මාස 01</option>
+        <option value="මාස 03">මාස 03</option>
+        <option value="මාස 06">මාස 06</option>
     </select>
-    
-    <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
-    <input type="text" id="colH" placeholder="Ex: 7" onblur="addPercentSymbol(this)">
-    
-    <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label>
-    <input type="text" id="colI">
-
-    <label>චෙක්පත් අංකය:</label>
-    <input type="text" id="colJ">
+    <label>පොලී %:</label><input type="text" id="colH" onblur="addPercentSymbol(this)">
+    <label>ලද පොලිය (රු):</label><input type="number" id="colI">
+    <label>චෙක්පත් අංකය:</label><input type="text" id="colJ">
 
     <div class="btn-grid">
         <button class="add" onclick="process('addData')">Data Add</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Attachment 4</button>
+        <button class="list-btn" onclick="generatePrintList()">📋 Print List</button>
+        <button class="clear-btn" onclick="clearPrintList()">🧹 Clear List</button>
     </div>
 </div>
 
-<div id="report-area">
-    <div class="header-container">
-        <div class="header-left">
-            <p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p>
-        </div>
-        <div class="header-right">
-            <div style="text-align: right; width: 100%; margin-bottom: 20px;"><h5 style="font-size: 14px; font-weight: bold; margin: 0;">ඇමුණුම 4</h5></div>
-            <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span></p>
-        </div>
-    </div>
-
-    <div class="report-title">කරන ලද ආයෝජන රු. <span id="rMainAmount"></span> පොලිය හා මුදල එවිමේ නිවේදනය</div>
-    <p class="bold"><span id="rBankDisplay"></span> - <span id="rReceiptDisplay"></span></p>
-
-    <p>ඉහත සඳහන් ආයෝජනයට අදාලව ලද පොලිය සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo" class="bold"></span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+<div id="list-report-area">
+    <div style="text-align: right; font-weight: bold;">ඇමුණුම 05</div>
+    <div class="list-title">ආයෝජන හා පොලී මුදල් පිළිබඳ සාරාංශ වාර්තාව</div>
+    <p><b>බැංකුව:</b> <span id="lAccountTitle"></span></p>
     
-    <table class="data-table">
-        <tr><td style="width: 65%;">1. අදාල ආයෝජනයට ලද මුළු පොලිය (රු)</td><td style="width: 35%; text-align: right; font-weight: bold;" id="rTotalInt"></td></tr>
-        <tr><td>2. අඩු කලා සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rDeductedInt"></td></tr>
-        <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rSentInt"></td></tr>
-    </table>
-
-    <p>තවද ඔබගේ ඉල්ලීම පරිදි ආයෝජනය කල මුදල චෙක්පත් අංක ................... මගින් එවමු / නැවත ආයෝජනය කල බව දන්වමු.</p>
-
-    <table class="investment-table">
-        <tr><td style="width: 65%;">ආයෝජනය කල මුදල (රු):</td><td style="width: 35%; text-align: right; font-weight: bold;" id="rAmtBottom"></td></tr>
-        <tr><td>ආයෝජනය වර්ගය:</td><td style="text-align: right; font-weight: bold;">ස්ථීර තැන්පතු</td></tr>
-        <tr><td>ආයෝජනය කල කාලය:</td><td style="text-align: right; font-weight: bold;" id="rPeriodText"></td></tr>
-        <tr><td>ආයෝජනය කල පොලි ප්‍රතිශතය:</td><td style="text-align: right; font-weight: bold;" id="rRateBottom"></td></tr>
-        <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td style="text-align: right; font-weight: bold;" id="rMaturityDate"></td></tr>
+    <table class="list-table">
+        <thead>
+            <tr>
+                <th style="width: 30px;">අංකය</th>
+                <th>ආයෝජන මුදල (රු.)</th>
+                <th>ආයෝජිත බැංකුව</th>
+                <th>රිසිට්පත් අංකය</th>
+                <th>ලද මුළු පොලිය (රු.)</th>
+                <th>රඳවාගත් 7% පොලිය</th>
+                <th>බැංකුවට එවන පොලිය</th>
+                <th>නැවත ආයෝජිත දිනය</th>
+                <th>නැවත ආයෝජිත මුදල</th>
+                <th>වර්ගය</th>
+                <th>කාලය</th>
+                <th>පොලී %</th>
+                <th>කල්පිරෙන දිනය</th>
+            </tr>
+        </thead>
+        <tbody id="list-table-body"></tbody>
     </table>
 
     <div class="signature-section">
-        <div class="sig-box-left">
-            <p class="bold">ගිණුම් ලිපිකරු</p>
-            <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p>
-            <p>නම: .......................................</p>
-            <p>අත්සන: .................................</p>
-            <p>දිනය: .................................</p>
-        </div>
-        <div class="sig-box-right">
-            <div style="width: fit-content;">
-                <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
-                <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
-                <p>නම: .......................................</p>
-                <p>අත්සන: .................................</p>
-                <p>දිනය: .................................</p>
-            </div>
-        </div>
+        <p>.......................................<br>ගිණුම් ලිපිකරු</p>
+        <p style="text-align: right;">.......................................<br>කළමනාකරු</p>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOzu1pMPRGSpmq6qAH1HPTrVCsiejjit6jIyyOnHwdhj5kR_uOGyFxdGpQVx71WE6uDg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQFCN7RkNz6Yuvp8mspyR42h3TlmT0sC0YR0jun17PW9ev6hY3EFeX4V560f2d4znUhQ/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -184,96 +140,99 @@
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("Incorrect username or password!"); }
+            } else { alert("Login Failed!"); }
         });
     }
 
-    function addPercentSymbol(input) {
-        let val = input.value.trim();
-        if (val !== "" && !isNaN(val.replace('%',''))) {
-            input.value = val.replace('%','') + "%";
-        }
-    }
-
     function calculateDuration() {
-        let startDate = new Date(document.getElementById('colC').value);
-        let endDate = new Date(document.getElementById('colG').value);
-        let durationSelect = document.getElementById('colF');
-        if (!isNaN(startDate) && !isNaN(endDate)) {
-            let diffDays = Math.ceil(Math.abs(endDate - startDate) / (1000 * 60 * 60 * 24)); 
-            if (diffDays >= 25 && diffDays <= 35) durationSelect.value = "මාස 01";
-            else if (diffDays >= 85 && diffDays <= 95) durationSelect.value = "මාස 03";
-            else if (diffDays >= 170 && diffDays <= 190) durationSelect.value = "මාස 06";
+        let start = new Date(document.getElementById('colC').value);
+        let end = new Date(document.getElementById('colG').value);
+        if (!isNaN(start) && !isNaN(end)) {
+            let diff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)); 
+            let sel = document.getElementById('colF');
+            if (diff >= 25 && diff <= 35) sel.value = "මාස 01";
+            else if (diff >= 85 && diff <= 95) sel.value = "මාස 03";
+            else if (diff >= 170 && diff <= 190) sel.value = "මාස 06";
         }
-    }
-
-    async function generateReport() {
-        await process('addData');
-
-        document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
-        // ලිපිනයට අදාළ නම colA වෙතින් ලබා ගැනීම
-        document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
-
-        const amt = parseFloat(document.getElementById('colE').value) || 0;
-        const totalInt = parseFloat(document.getElementById('colI').value) || 0;
-        const deducted = totalInt * 0.07;
-
-        document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
-        document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
-        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
-        document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
-        
-        let rate = document.getElementById('colH').value;
-        document.getElementById('rRateBottom').innerText = rate.includes('%') ? rate : rate + "%";
-        document.getElementById('rMaturityDate').innerText = document.getElementById('colG').value;
-
-        window.print();
     }
 
     async function process(actionName) {
-        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
         if(actionName === 'searchData') {
-            let sId = document.getElementById('searchId').value;
-            if(!sId) { alert("Please enter the receipt number to search!"); return; }
-            params.append('colD', sId);
+            params.append('colD', document.getElementById('searchId').value);
         } else {
-            fields.forEach(f => params.append(f, document.getElementById(f).value));
+            ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'].forEach(f => params.append(f, document.getElementById(f).value));
         }
         params.append('action', actionName);
-
-        try {
-            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
-            let text = await response.text();
-            try {
-                let data = JSON.parse(text);
-                if(actionName === 'searchData') {
-                    fields.forEach((f, i) => {
-                        let element = document.getElementById(f);
-                        if((i === 2 || i === 6) && data[i]) { 
-                            let dateVal = new Date(data[i]);
-                            if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
-                        } else {
-                            element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
-                        }
-                    });
-                    alert("Data found!");
-                }
-            } catch(e) {
-                if(text.toLowerCase().includes("success")) {
-                    alert("Operation Successful!");
-                    if(actionName !== 'searchData' && actionName !== 'addData') {
-                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
-                    }
-                } else { alert("Response: " + text); }
-            }
-        } catch(err) { alert("Error!: " + err.message); }
+        let res = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+        let text = await res.text();
+        if(text.includes("success")) alert("සාර්ථකයි!");
+        else if(actionName === 'searchData' && text !== "notfound") {
+            let data = JSON.parse(text);
+            document.getElementById('colA').value = data[0];
+            document.getElementById('colD').value = data[3];
+            document.getElementById('colE').value = data[4];
+            alert("දත්ත හමුවිය!");
+        }
     }
+
+    async function generatePrintList() {
+        const acc = document.getElementById('colA').value;
+        let resp = await fetch(`${SCRIPT_URL}?action=getPrintList`);
+        let data = await resp.json();
+        let tbody = document.getElementById('list-table-body');
+        tbody.innerHTML = "";
+        document.getElementById('lAccountTitle').innerText = acc;
+
+        let totalInv = 0, count = 0;
+
+        data.forEach((row) => {
+            if(row[0] === acc) {
+                count++;
+                let rawInv = parseFloat(row[4]) || 0;
+                let rawInt = parseFloat(row[8]) || 0;
+                let tax = rawInt * 0.07;
+                let netInt = rawInt - tax;
+                totalInv += rawInv;
+
+                tbody.innerHTML += `<tr>
+                    <td>${count}</td>
+                    <td style="text-align:right">${rawInv.toLocaleString()}</td>
+                    <td>${row[1]}</td>
+                    <td>${row[3]}</td>
+                    <td style="text-align:right">${rawInt.toLocaleString()}</td>
+                    <td style="text-align:right">${tax.toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+                    <td style="text-align:right"><b>${netInt.toLocaleString(undefined,{minimumFractionDigits:2})}</b></td>
+                    <td>${row[6]}</td>
+                    <td style="text-align:right">${rawInv.toLocaleString()}</td>
+                    <td>ස්ථීර තැන්පතු</td>
+                    <td>${row[5]}</td>
+                    <td>${row[7]}</td>
+                    <td>${row[6]}</td>
+                </tr>`;
+            }
+        });
+
+        if(count > 0) {
+            tbody.innerHTML += `<tr style="font-weight:bold; background:#eee">
+                <td>එකතුව</td>
+                <td style="text-align:right">${totalInv.toLocaleString()}</td>
+                <td colspan="6"></td>
+                <td style="text-align:right">${totalInv.toLocaleString()}</td>
+                <td colspan="4"></td>
+            </tr>`;
+            window.print();
+        } else { alert("දත්ත නැත!"); }
+    }
+
+    async function clearPrintList() {
+        if(confirm("ලැයිස්තුව මකන්නද?")) {
+            await fetch(`${SCRIPT_URL}?action=clearPrintSheet`, {method: 'POST'});
+            alert("මකා දමන ලදී.");
+        }
+    }
+
+    function addPercentSymbol(i) { if(i.value && !i.value.includes('%')) i.value += '%'; }
 </script>
 </body>
 </html>
