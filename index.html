@@ -8,7 +8,7 @@
         body { font-family: sans-serif; font-size: 11pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background: #90caf9; padding: 20px; text-align: center; font-size: 18pt; font-weight: bold; }
         .container { background: white; max-width: 700px; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; text-align: left; }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
         input, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
@@ -18,25 +18,27 @@
         .delete { background: #e74c3c; }
         .print-btn { background: #9b59b6; }
         .list-btn { background: #34495e; }
-        .clear-btn { background: #95a5a6; grid-column: span 2; margin-top: 5px; }
+        .clear-btn { background: #95a5a6; grid-column: span 2; }
         
         #login-area { text-align: center; } #system-area { display: none; }
 
-        /* Report Styles */
-        #report-area, #list-report-area { display: none; background: white; width: 297mm; min-height: 210mm; margin: auto; padding: 10mm; box-sizing: border-box; }
-        .list-title { font-size: 15pt; font-weight: bold; text-align: center; text-decoration: underline; margin-bottom: 15px; }
+        /* Report Layouts */
+        #report-area, #list-report-area { display: none; background: white; width: 297mm; min-height: 210mm; margin: auto; padding: 15mm; box-sizing: border-box; color: black; }
+        .report-header-flex { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .title-underlined { text-align: center; font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 10px; }
         
-        .list-table { width: 100%; border-collapse: collapse; font-size: 9pt; table-layout: fixed; }
-        .list-table th, .list-table td { border: 1px solid #000; padding: 4px; text-align: center; word-wrap: break-word; }
-        .list-table th { background-color: #f2f2f2; }
+        .list-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; table-layout: fixed; }
+        .list-table th, .list-table td { border: 1px solid #000; padding: 5px; text-align: center; }
+        .list-table th { background-color: #f9f9f9; }
 
-        .signature-section { display: flex; justify-content: space-between; margin-top: 40px; }
+        .sig-container { display: flex; justify-content: space-between; margin-top: 50px; font-size: 10pt; }
+        .sig-box { width: 45%; }
 
         @media print {
             @page { size: A4 landscape; margin: 5mm; }
             body { background: none; }
-            .header, .container { display: none !important; }
-            #list-report-area { display: block !important; width: 100%; }
+            .header, .container, .no-print { display: none !important; }
+            #list-report-area, #report-area { display: block !important; }
         }
     </style>
 </head>
@@ -52,66 +54,59 @@
 </div>
 
 <div id="system-area" class="container">
-    <h3 style="color: purple; text-align: center;">Investment Management</h3>
-    <input type="text" id="searchId" placeholder="සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න">
+    <label>සෙවීමට රිසිට්පත් අංකය:</label>
+    <input type="text" id="searchId">
     <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     <hr>
     
     <label>ගිණුමේ නම:</label>
-    <select id="colA">
-        <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
-        <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
-        <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
-        <option value="ණය සංරක්ෂණ අරමුදල්">ණය සංරක්ෂණ අරමුදල්</option>
-        <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
-    </select>
+    <select id="colA"><option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option><option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option></select>
 
     <label>ආයෝජිත බැංකුව:</label>
-    <select id="colB">
-        <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
-        <option value="මහජන බැංකුව">මහජන බැංකුව</option>
-        <option value="ප්‍රාදේශීය සංවර්ධන බැංකුව">ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
-        <option value="ජාතික ඉතිරිකිරීමේ බැංකුව">ජාතික ඉතිරිකිරීමේ බැංකුව</option>
-    </select>
+    <select id="colB"><option value="මහජන බැංකුව">මහජන බැංකුව</option><option value="ලංකා බැංකුව">ලංකා බැංකුව</option></select>
 
-    <label>දිනය:</label><input type="date" id="colC" onchange="calculateDuration()">
+    <label>දිනය:</label><input type="date" id="colC">
     <label>රිසිට්පත් අංකය:</label><input type="text" id="colD">
     <label>මුදල (රු):</label><input type="number" id="colE">
-    <label>කල්පිරෙන දිනය:</label><input type="date" id="colG" onchange="calculateDuration()">
-    <label>කාලය:</label>
-    <select id="colF">
-        <option value="මාස 01">මාස 01</option>
-        <option value="මාස 03">මාස 03</option>
-        <option value="මාස 06">මාස 06</option>
-    </select>
-    <label>පොලී %:</label><input type="text" id="colH" onblur="addPercentSymbol(this)">
+    <label>කල්පිරෙන දිනය:</label><input type="date" id="colG">
+    <label>කාලය:</label><select id="colF"><option value="මාස 03">මාස 03</option><option value="මාස 06">මාස 06</option></select>
+    <label>පොලී %:</label><input type="text" id="colH">
     <label>ලද පොලිය (රු):</label><input type="number" id="colI">
     <label>චෙක්පත් අංකය:</label><input type="text" id="colJ">
 
     <div class="btn-grid">
         <button class="add" onclick="process('addData')">Data Add</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Attachment 4</button>
-        <button class="list-btn" onclick="generatePrintList()">📋 Print List</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save (Attch 4)</button>
+        <button class="list-btn" onclick="generatePrintList()">📋 Print List (Attch 5)</button>
         <button class="clear-btn" onclick="clearPrintList()">🧹 Clear List</button>
     </div>
 </div>
 
 <div id="list-report-area">
-    <div style="text-align: right; font-weight: bold;">ඇමුණුම 05</div>
-    <div class="list-title">ආයෝජන හා පොලී මුදල් පිළිබඳ සාරාංශ වාර්තාව</div>
-    <p><b>බැංකුව:</b> <span id="lAccountTitle"></span></p>
+    <div class="report-header-flex">
+        <div>කළමනාකරු,<br>සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව.</div>
+        <div style="text-align: right;">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="lCurrentDate"></span></div>
+    </div>
+
+    <div class="title-underlined">කරන ලද ආයෝජන පොලිය හා මුදල එවිමේ නිවේදනය</div>
+    <p style="font-size: 10pt;">පහත සඳහන් ආයෝජන මුදල් වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="lCheckDisplay" style="font-weight:bold;"></span> දරණ චෙක්පත මඟින් අමුණා එවමු.</p>
     
     <table class="list-table">
         <thead>
             <tr>
-                <th style="width: 30px;">අංකය</th>
-                <th>ආයෝජන මුදල (රු.)</th>
-                <th>ආයෝජිත බැංකුව</th>
-                <th>රිසිට්පත් අංකය</th>
-                <th>ලද මුළු පොලිය (රු.)</th>
+                <th rowspan="2" style="width:25px;">අංකය</th>
+                <th colspan="3">කල්පිරුණු ආයෝජන පිළිබඳ විස්තර</th>
+                <th colspan="3">පොලී විස්තර</th>
+                <th colspan="6">නැවත ආයෝජන පිළිබඳ විස්තර</th>
+            </tr>
+            <tr>
+                <th>ආයෝජන මුදල (රු)</th>
+                <th>ආයෝජනය කළ බැංකුව</th>
+                <th>ආයෝජන රිසිට්පත් අංකය</th>
+                <th>අදාල මුළු පොලිය</th>
                 <th>රඳවාගත් 7% පොලිය</th>
-                <th>බැංකුවට එවන පොලිය</th>
+                <th>එවන පොලි මුදල</th>
                 <th>නැවත ආයෝජිත දිනය</th>
                 <th>නැවත ආයෝජිත මුදල</th>
                 <th>වර්ගය</th>
@@ -123,116 +118,106 @@
         <tbody id="list-table-body"></tbody>
     </table>
 
-    <div class="signature-section">
-        <p>.......................................<br>ගිණුම් ලිපිකරු</p>
-        <p style="text-align: right;">.......................................<br>කළමනාකරු</p>
+    <div class="sig-container">
+        <div class="sig-box">
+            ගිණුම් ලිපිකරු<br>සමෘද්ධි මහ සංගමය/මූලස්ථාන කළමනාකරු<br>නම:................................................<br>අත්සන:...........................................<br>දිනය:..............................................
+        </div>
+        <div class="sig-box" style="text-align: left; padding-left: 50px;">
+            බලයලත් නිලධාරී සමෘද්ධි බැංකු මහ සංගමය/ප්‍රාදේශීය ලේකම්<br>නම:................................................<br>අත්සන:...........................................<br>දිනය:..............................................
+        </div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQFCN7RkNz6Yuvp8mspyR42h3TlmT0sC0YR0jun17PW9ev6hY3EFeX4V560f2d4znUhQ/exec";
+    const SCRIPT_URL = "ඔබේ_SCRIPT_URL_එක_මෙතැනට_යොදන්න";
 
     function doLogin() {
-        let u = document.getElementById('user').value;
-        let p = document.getElementById('pass').value;
+        let u = document.getElementById('user').value, p = document.getElementById('pass').value;
         fetch(`${SCRIPT_URL}?action=login&username=${u}&password=${p}`, {method: 'POST'})
         .then(r => r.text()).then(res => {
-            if(res.trim() === "success") {
-                document.getElementById('login-area').style.display='none';
-                document.getElementById('system-area').style.display='block';
-            } else { alert("Login Failed!"); }
+            if(res.trim() === "success") { document.getElementById('login-area').style.display='none'; document.getElementById('system-area').style.display='block'; }
+            else { alert("Login Failed!"); }
         });
-    }
-
-    function calculateDuration() {
-        let start = new Date(document.getElementById('colC').value);
-        let end = new Date(document.getElementById('colG').value);
-        if (!isNaN(start) && !isNaN(end)) {
-            let diff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)); 
-            let sel = document.getElementById('colF');
-            if (diff >= 25 && diff <= 35) sel.value = "මාස 01";
-            else if (diff >= 85 && diff <= 95) sel.value = "මාස 03";
-            else if (diff >= 170 && diff <= 190) sel.value = "මාස 06";
-        }
     }
 
     async function process(actionName) {
         let params = new URLSearchParams();
-        if(actionName === 'searchData') {
-            params.append('colD', document.getElementById('searchId').value);
-        } else {
-            ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'].forEach(f => params.append(f, document.getElementById(f).value));
-        }
+        if(actionName === 'searchData') { params.append('colD', document.getElementById('searchId').value); }
+        else { ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'].forEach(f => params.append(f, document.getElementById(f).value)); }
         params.append('action', actionName);
+        
         let res = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
         let text = await res.text();
-        if(text.includes("success")) alert("සාර්ථකයි!");
-        else if(actionName === 'searchData' && text !== "notfound") {
+        
+        if(actionName === 'searchData' && text !== "notfound") {
             let data = JSON.parse(text);
             document.getElementById('colA').value = data[0];
+            document.getElementById('colB').value = data[1];
+            document.getElementById('colC').value = data[2] ? new Date(data[2]).toISOString().split('T')[0] : "";
             document.getElementById('colD').value = data[3];
             document.getElementById('colE').value = data[4];
+            document.getElementById('colF').value = data[5];
+            document.getElementById('colG').value = data[6] ? new Date(data[6]).toISOString().split('T')[0] : "";
+            document.getElementById('colH').value = data[7];
+            document.getElementById('colI').value = data[8];
+            document.getElementById('colJ').value = data[9];
             alert("දත්ත හමුවිය!");
-        }
+        } else if(text.includes("success")) { alert("සාර්ථකයි!"); }
     }
 
     async function generatePrintList() {
         const acc = document.getElementById('colA').value;
+        document.getElementById('lCurrentDate').innerText = new Date().toISOString().split('T')[0];
+        document.getElementById('lCheckDisplay').innerText = document.getElementById('colJ').value || ".........";
+
         let resp = await fetch(`${SCRIPT_URL}?action=getPrintList`);
         let data = await resp.json();
         let tbody = document.getElementById('list-table-body');
         tbody.innerHTML = "";
-        document.getElementById('lAccountTitle').innerText = acc;
-
-        let totalInv = 0, count = 0;
+        
+        let t1=0, t2=0, t3=0, count=0;
 
         data.forEach((row) => {
             if(row[0] === acc) {
                 count++;
-                let rawInv = parseFloat(row[4]) || 0;
-                let rawInt = parseFloat(row[8]) || 0;
-                let tax = rawInt * 0.07;
-                let netInt = rawInt - tax;
-                totalInv += rawInv;
+                let inv = parseFloat(row[4]) || 0, intr = parseFloat(row[8]) || 0;
+                let tax = intr * 0.07, net = intr - tax;
+                t1+=intr; t2+=tax; t3+=net;
 
                 tbody.innerHTML += `<tr>
                     <td>${count}</td>
-                    <td style="text-align:right">${rawInv.toLocaleString()}</td>
+                    <td style="text-align:right">${inv.toLocaleString()}</td>
                     <td>${row[1]}</td>
                     <td>${row[3]}</td>
-                    <td style="text-align:right">${rawInt.toLocaleString()}</td>
-                    <td style="text-align:right">${tax.toLocaleString(undefined,{minimumFractionDigits:2})}</td>
-                    <td style="text-align:right"><b>${netInt.toLocaleString(undefined,{minimumFractionDigits:2})}</b></td>
-                    <td>${row[6]}</td>
-                    <td style="text-align:right">${rawInv.toLocaleString()}</td>
-                    <td>ස්ථීර තැන්පතු</td>
+                    <td style="text-align:right">${intr.toFixed(2)}</td>
+                    <td style="text-align:right">${tax.toFixed(2)}</td>
+                    <td style="text-align:right">${net.toFixed(2)}</td>
+                    <td>${row[2] ? new Date(row[2]).toISOString().split('T')[0] : ""}</td>
+                    <td style="text-align:right">${inv.toLocaleString()}</td>
+                    <td>ස්ථීර</td>
                     <td>${row[5]}</td>
                     <td>${row[7]}</td>
-                    <td>${row[6]}</td>
+                    <td>${row[6] ? new Date(row[6]).toISOString().split('T')[0] : ""}</td>
                 </tr>`;
             }
         });
 
         if(count > 0) {
-            tbody.innerHTML += `<tr style="font-weight:bold; background:#eee">
-                <td>එකතුව</td>
-                <td style="text-align:right">${totalInv.toLocaleString()}</td>
-                <td colspan="6"></td>
-                <td style="text-align:right">${totalInv.toLocaleString()}</td>
-                <td colspan="4"></td>
-            </tr>`;
+            tbody.innerHTML += `<tr style="font-weight:bold; background:#eee"><td colspan="4">එකතුව</td><td style="text-align:right">${t1.toFixed(2)}</td><td style="text-align:right">${t2.toFixed(2)}</td><td style="text-align:right">${t3.toFixed(2)}</td><td colspan="6"></td></tr>`;
+            document.getElementById('system-area').style.display = 'none';
+            document.getElementById('list-report-area').style.display = 'block';
             window.print();
+            location.reload(); 
         } else { alert("දත්ත නැත!"); }
     }
 
-    async function clearPrintList() {
-        if(confirm("ලැයිස්තුව මකන්නද?")) {
-            await fetch(`${SCRIPT_URL}?action=clearPrintSheet`, {method: 'POST'});
-            alert("මකා දමන ලදී.");
-        }
+    function generateReport() {
+        // Attachment 4 කේතය මෙහි තිබිය යුතුය (පෙර ලබා දුන් ආකාරයටම)
+        alert("Attachment 4 සකස් වෙමින් පවතී...");
+        window.print();
     }
 
-    function addPercentSymbol(i) { if(i.value && !i.value.includes('%')) i.value += '%'; }
+    async function clearPrintList() { if(confirm("ලැයිස්තුව මකන්නද?")) { await fetch(`${SCRIPT_URL}?action=clearPrintSheet`, {method: 'POST'}); alert("මකා දමන ලදී."); } }
 </script>
 </body>
 </html>
