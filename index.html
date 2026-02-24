@@ -3,305 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Management System</title>
+    <title>Investment Interest Form</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #27ae60;
-            --danger-color: #e74c3c;
-            --light-bg: #f4f7f6;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
-            margin: 0;
+            font-size: 12px;
+            margin: 40px;
+            line-height: 1.6;
+        }
+
+        .header-section {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Login Styling */
-        #login-container {
-            margin-top: 100px;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 350px;
-            text-align: center;
-        }
-
-        /* Dashboard Styling */
-        .container {
-            width: 95%;
-            max-width: 1100px;
-            margin: 20px auto;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-        }
-
-        h2, h3 { color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px; }
-
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
 
-        input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
+        .title {
+            text-align: center;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
 
-        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
-
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .btn-add { background-color: var(--accent-color); }
-        .btn-search { background-color: #3498db; }
-        .btn-clear { background-color: #f39c12; }
-        .btn-delete { background-color: var(--danger-color); }
-        .btn-print { background-color: #8e44ad; }
-
-        button:hover { opacity: 0.9; transform: translateY(-2px); }
-
-        /* Search Result Box */
-        #search-result-box {
-            background: #e8f4fd;
-            padding: 15px;
-            border-left: 5px solid #3498db;
-            margin-top: 20px;
-        }
-
-        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
+            margin-bottom: 30px;
         }
 
         th, td {
-            border: 1px solid #333;
-            padding: 10px;
+            border: 1px solid black;
+            padding: 4px;
             text-align: center;
-            font-size: 13px;
+            vertical-align: middle;
         }
 
-        th { background-color: #f8f9fa; }
+        th {
+            background-color: #f9f9f9;
+            font-size: 11px;
+        }
 
-        .hidden { display: none; }
+        .total-row {
+            font-weight: bold;
+        }
 
-        @media print {
-            .no-print { display: none; }
-            body { background: white; }
-            .card { box-shadow: none; border: none; padding: 0; }
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+
+        .signature-box {
+            width: 45%;
+        }
+
+        .dotted-line {
+            border-bottom: 1px dotted black;
+            display: inline-block;
+            width: 150px;
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div id="login-container">
-            <h2>Investment System</h2>
-            <p>කරුණාකර පද්ධතියට ඇතුළු වන්න</p>
-            <input type="text" id="username" placeholder="පරිශීලක නාමය" style="width: 100%; margin-bottom: 15px;">
-            <input type="password" id="password" placeholder="මුරපදය" style="width: 100%; margin-bottom: 20px;">
-            <button class="btn-add" style="width: 100%;" onclick="login()">ඇතුළු වන්න (Login)</button>
+    <div class="header-section">
+        <div>
+            කළමනාකරු,<br>
+            සමෘද්ධි බැංකු සංගමය,<br>
+            පදියතලාව
+        </div>
+        <div style="text-align: right;">
+            සමෘද්ධි මහ සංගමය<br>
+            පදියතලාව<br>
+            දිනය:- 2025-04-07
         </div>
     </div>
 
-    <div id="dashboard" class="container hidden">
-        
-        <div class="card no-print">
-            <h3>1. දත්ත ඇතුළත් කිරීම (Data Entry)</h3>
-            <div class="input-grid">
-                <input type="text" id="bankName" placeholder="ආයෝජන මුදල අයත් බැංකුව">
-                <input type="text" id="investBank" placeholder="ආයෝජනය කළ බැංකුව">
-                <input type="date" id="date">
-                <input type="text" id="receiptNo" placeholder="ආයෝජන රිසිට්පත් අංකය">
-                <input type="number" id="amount" placeholder="ආයෝජන මුදල (රු)">
-                <input type="text" id="period" placeholder="කාලය (මාස)">
-                <input type="date" id="matureDate">
-                <input type="text" id="rate" placeholder="පොලී ප්‍රතිශතය %">
-                <input type="number" id="interest" placeholder="ලැබෙන පොලිය">
-                <input type="text" id="chequeNo" placeholder="චෙක්පත් අංකය">
-            </div>
-            <button class="btn-add" onclick="addData()">දත්ත ගබඩා කරන්න (Add Data)</button>
+    <div class="title">
+        කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය
+    </div>
+
+    <p>පහත සඳහන් ආයෝජන මුදල්වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවා ගත යුතු මුදල අඩුකිරීමෙන් පසු 061640 දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="6">කල්පිරුණු ආයෝජන පිළිබඳ විස්තර</th>
+                <th colspan="6">නැවත ආයෝජන පිළිබඳ විස්තර</th>
+            </tr>
+            <tr>
+                <th>ආයෝජන මුදල (රු)</th>
+                <th>ආයෝජන කළ බැංකුව</th>
+                <th>ආයෝජන රිසිට්පත් අංකය</th>
+                <th>අදාල ආයෝජනයට ලද මුළු පොලිය</th>
+                <th>අඩුකල මහා සංගමය රඳවාගත් පොලී මුදල</th>
+                <th>සමෘද්ධි බැංකු සංගමයට එවන පොලී මුදල</th>
+                <th>නැවත ආයෝජනය කල දිනය</th>
+                <th>නැවත ආයෝජනය කල මුදල</th>
+                <th>ආයෝජන වර්ගය</th>
+                <th>ආයෝජනය කල කාලය</th>
+                <th>ආයෝජන කල පොලී ප්‍රතිශතය</th>
+                <th>ආයෝජනය කල්පිරෙන දිනය</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>2,500,000.00</td>
+                <td>මහජන බැංකුව</td>
+                <td>181-60-01-00007208-2</td>
+                <td>42996.57</td>
+                <td>3009.76</td>
+                <td>39986.81</td>
+                <td>2025-04-03</td>
+                <td>2,500,000.00</td>
+                <td>ස්ථීර</td>
+                <td>මාස 03</td>
+                <td>7.25</td>
+                <td>2025-07-03</td>
+            </tr>
+            <tr>
+                <td>235,120.00</td>
+                <td>මහජන බැංකුව</td>
+                <td>181-60-01-00007209-1</td>
+                <td>3391.52</td>
+                <td>237.41</td>
+                <td>3154.11</td>
+                <td>2025-04-03</td>
+                <td>235,120.00</td>
+                <td>ස්ථීර</td>
+                <td>මාස 03</td>
+                <td>6.50</td>
+                <td>2025-07-03</td>
+            </tr>
+            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="total-row">
+                <td colspan="3">එකතුව</td>
+                <td>46388.09</td>
+                <td>3247.17</td>
+                <td>43140.92</td>
+                <td colspan="6"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-section">
+        <div class="signature-box">
+            ගිණුම් ලිපිකරු<br>
+            සමෘද්ධි මහ සංගමය/මූලස්ථාන කළමනාකරු<br>
+            නම:- <span class="dotted-line"></span><br>
+            අත්සන:- <span class="dotted-line"></span><br>
+            දිනය:- <span class="dotted-line"></span>
         </div>
-
-        <div class="card no-print" style="border-top: 4px solid #3498db;">
-            <h3>2. සෙවීම සහ තේරීම (Search & Select)</h3>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="searchKey" placeholder="සෙවිය යුතු රිසිට්පත් අංකය ඇතුළත් කරන්න...">
-                <button class="btn-search" onclick="searchData()">සොයන්න (Search)</button>
-            </div>
-
-            <div id="search-result-box" class="hidden">
-                <p id="search-info" style="font-weight: bold;"></p>
-                <div class="btn-group">
-                    <button class="btn-add" onclick="addToPrint()">Print List එකට දමන්න</button>
-                    <button class="btn-delete" onclick="deleteData()">Delete (මකා දමන්න)</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <b>සමෘද්ධි මහ සංගමය</b><br>
-                    පදියතලාව
-                </div>
-                <div style="text-align: right;">
-                    දිනය: <span id="today-date"></span>
-                </div>
-            </div>
-            <h3 style="text-align: center; text-decoration: underline; margin-top: 30px;">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</h3>
-            
-            <table id="print-table">
-                <thead>
-                    <tr>
-                        <th>ආයෝජන මුදල (රු)</th>
-                        <th>ආයෝජනය කළ බැංකුව</th>
-                        <th>ආයෝජන රිසිට්පත් අංකය</th>
-                        <th>ලැබෙන පොලිය</th>
-                        <th>කල්පිරෙන දිනය</th>
-                    </tr>
-                </thead>
-                <tbody id="print-body">
-                    </tbody>
-            </table>
-
-            <div class="btn-group no-print" style="margin-top: 20px; justify-content: flex-end;">
-                <button class="btn-print" onclick="window.print()">Print List</button>
-                <button class="btn-clear" onclick="clearPrintTable()">Clear Data (මුද්‍රණ පුවරුව මකන්න)</button>
-            </div>
+        <div class="signature-box" style="text-align: left;">
+            බලයලත් නිලධාරි සමෘද්ධි බැංකු<br>
+            මහ සංගමය/ප්‍රාදේශීය ලේකම්<br>
+            නම:- <span class="dotted-line"></span><br>
+            අත්සන:- <span class="dotted-line"></span><br>
+            දිනය:- <span class="dotted-line"></span>
         </div>
     </div>
 
-    <script>
-        // *** Google Apps Script එක Deploy කළ පසු ලැබෙන URL එක මෙතනට දමන්න ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyvnEtzs__pk838Prdo7ZvzwPE9xmYzO2LnYLJIz4npy0auzSsmQpn58iJjAk-tgnzmVA/exec';
-        
-        let foundRecord = null; // සෙවූ විට ලැබෙන තාවකාලික දත්ත
-
-        function login() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            // සත්‍ය පද්ධතියකදී මෙය Apps Script හරහා Password sheet එකෙන් පරීක්ෂා කළ යුතුය
-            if(user === "Gamini" && pass === "900000000") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('today-date').innerText = new Date().toLocaleDateString();
-            } else {
-                alert("මුරපදය වැරදියි!");
-            }
-        }
-
-        // 1. FD Data පිටුවට දත්ත එක් කිරීම
-        function addData() {
-            const formData = {
-                bankName: document.getElementById('bankName').value,
-                investBank: document.getElementById('investBank').value,
-                date: document.getElementById('date').value,
-                receiptNo: document.getElementById('receiptNo').value,
-                amount: document.getElementById('amount').value,
-                period: document.getElementById('period').value,
-                matureDate: document.getElementById('matureDate').value,
-                rate: document.getElementById('rate').value,
-                interest: document.getElementById('interest').value,
-                chequeNo: document.getElementById('chequeNo').value
-            };
-
-            if(!formData.receiptNo) return alert("කරුණාකර රිසිට්පත් අංකය ඇතුළත් කරන්න.");
-
-            google.script.run.withSuccessHandler(res => {
-                alert(res);
-                clearInputs();
-            }).addFDData(formData);
-        }
-
-        // 2. දත්ත සෙවීම
-        function searchData() {
-            const key = document.getElementById('searchKey').value;
-            if(!key) return alert("සෙවීමට අංකයක් ඇතුළත් කරන්න.");
-
-            google.script.run.withSuccessHandler(res => {
-                if(res.found) {
-                    foundRecord = res.details;
-                    document.getElementById('search-result-box').classList.remove('hidden');
-                    document.getElementById('search-info').innerHTML = 
-                        `හමුවූ දත්ත: ${res.details[1]} | මුදල: රු. ${res.details[4]}`;
-                } else {
-                    alert("එම අංකයෙන් දත්තයක් හමු නොවීය.");
-                    document.getElementById('search-result-box').classList.add('hidden');
-                }
-            }).searchRecord(key);
-        }
-
-        // 3. සොයාගත් දත්ත Print List එකට එකතු කිරීම
-        function addToPrint() {
-            if(!foundRecord) return;
-            
-            const tableBody = document.getElementById('print-body');
-            const newRow = `<tr>
-                <td>${foundRecord[4]}</td>
-                <td>${foundRecord[1]}</td>
-                <td>${foundRecord[3]}</td>
-                <td>${foundRecord[8]}</td>
-                <td>${new Date(foundRecord[6]).toLocaleDateString()}</td>
-            </tr>`;
-            
-            tableBody.innerHTML += newRow;
-            alert("මුද්‍රණ වාර්තාවට එකතු කරන ලදී.");
-            document.getElementById('search-result-box').classList.add('hidden');
-        }
-
-        // 4. දත්තයක් මකා දැමීම
-        function deleteData() {
-            if(confirm("මෙම දත්තය FD Data Sheet එකෙන් සදහටම මකා දමන්නද?")) {
-                const key = document.getElementById('searchKey').value;
-                google.script.run.withSuccessHandler(res => {
-                    alert(res);
-                    document.getElementById('search-result-box').classList.add('hidden');
-                }).deleteRecord(key);
-            }
-        }
-
-        // 5. මුද්‍රණ වගුව හිස් කිරීම (Clear Print Page)
-        function clearPrintTable() {
-            if(confirm("මුද්‍රණ වාර්තාවේ ඇති සියලු තොරතුරු මකා දැමීමට අවශ්‍යද?")) {
-                google.script.run.withSuccessHandler(res => {
-                    document.getElementById('print-body').innerHTML = "";
-                    alert(res);
-                }).clearPrintSheet();
-            }
-        }
-
-        function clearInputs() {
-            const inputs = document.querySelectorAll('.input-grid input');
-            inputs.forEach(input => input.value = "");
-        }
-    </script>
 </body>
 </html>
