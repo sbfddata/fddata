@@ -1,198 +1,102 @@
 <!DOCTYPE html>
-<html lang="si">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Interest Form</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 13px;
-            margin: 40px;
-            line-height: 1.5;
-            color: #333;
-        }
-
-        /* ඉහළ කොටස සකස් කිරීම */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 30px;
-        }
-
-        .header-left {
-            text-align: left;
-        }
-
-        /* දකුණු පස පේළි තුන එක එල්ලේ තැබීම සඳහා */
-        .header-right {
-            text-align: left; /* බ්ලොක් එක ඇතුලේ වමට පෙළගැස්වීම */
-            min-width: 150px;
-        }
-
-        .title {
-            text-align: center;
-            font-weight: bold;
-            text-decoration: underline;
-            font-size: 16px;
-            margin: 20px 0;
-            display: block;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 6px;
-            text-align: center;
-            font-size: 11px;
-        }
-
-        th {
-            background-color: #f2f2 f2;
-        }
-
-        .total-row {
-            font-weight: bold;
-            background-color: #fafafa;
-        }
-
-        .footer-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 50px;
-        }
-
-        .signature-box {
-            width: 45%;
-        }
-
-        .dotted-line {
-            border-bottom: 1px dotted #000;
-            display: inline-block;
-            width: 180px;
-            margin-top: 10px;
-        }
-    </style>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; }
+    .container { width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px #ccc; }
+    input, select { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; }
+    button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; color: white; }
+    .btn-login { background-color: #2ecc71; }
+    .btn-add { background-color: #3498db; }
+    .hidden { display: none; }
+    header { background: #2c3e50; color: white; padding: 10px; }
+  </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <div class="header-left">
-            කළමනාකරු,<br>
-            සමෘද්ධි බැංකු සංගමය,<br>
-            පදියතලාව
-        </div>
-        
-        <div class="header-right">
-            සමෘද්ධි මහ සංගමය<br>
-            පදියතලාව<br>
-            දිනය:- <span id="currentDate"></span>
-        </div>
-    </div>
+<header>
+  <h3>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය - පදියතලාව</h3>
+</header>
 
-    <div class="title">
-        කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය
-    </div>
+<div id="loginPage" class="container">
+  <h2>Login</h2>
+  <input type="text" id="user" placeholder="පරිශීලක නාමය">
+  <input type="password" id="pass" placeholder="මුරපදය">
+  <button class="btn-login" onclick="login()">පිවිසෙන්න</button>
+</div>
 
-    <p>පහත සඳහන් ආයෝජන මුදල්වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවා ගත යුතු මුදල අඩුකිරීමෙන් පසු 061640 දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+<div id="dashboard" class="container hidden">
+  <h2>Dashboard</h2>
+  <button class="btn-add" onclick="showFDPage()">FD Data</button>
+  <button style="background: #e67e22;" onclick="alert('Print List Loading...')">Print List</button>
+</div>
 
-    <table>
-        <thead>
-            <tr>
-                <th colspan="6">කල්පිරුණු ආයෝජන පිළිබඳ විස්තර</th>
-                <th colspan="6">නැවත ආයෝජන පිළිබඳ විස්තර</th>
-            </tr>
-            <tr>
-                <th>ආයෝජන මුදල (රු)</th>
-                <th>ආයෝජන කළ බැංකුව</th>
-                <th>ආයෝජන රිසිට්පත් අංකය</th>
-                <th>අදාල ආයෝජනයට ලද මුළු පොලිය</th>
-                <th>අඩුකල මහා සංගමය රඳවාගත් පොලී මුදල</th>
-                <th>සමෘද්ධි බැංකු සංගමයට එවන පොලී මුදල</th>
-                <th>නැවත ආයෝජනය කල දිනය</th>
-                <th>නැවත ආයෝජනය කල මුදල</th>
-                <th>ආයෝජන වර්ගය</th>
-                <th>ආයෝජනය කල කාලය</th>
-                <th>ආයෝජන කල පොලී ප්‍රතිශතය</th>
-                <th>ආයෝජනය කල්පිරෙන දිනය</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>2,500,000.00</td>
-                <td>මහජන බැංකුව</td>
-                <td>181-60-01-00007208-2</td>
-                <td>42996.57</td>
-                <td>3009.76</td>
-                <td>39986.81</td>
-                <td>2025-04-03</td>
-                <td>2,500,000.00</td>
-                <td>ස්ථීර</td>
-                <td>මාස 03</td>
-                <td>7.25</td>
-                <td>2025-07-03</td>
-            </tr>
-            <tr>
-                <td>235,120.00</td>
-                <td>මහජන බැංකුව</td>
-                <td>181-60-01-00007209-1</td>
-                <td>3391.52</td>
-                <td>237.41</td>
-                <td>3154.11</td>
-                <td>2025-04-03</td>
-                <td>235,120.00</td>
-                <td>ස්ථීර</td>
-                <td>මාස 03</td>
-                <td>6.50</td>
-                <td>2025-07-03</td>
-            </tr>
-            <tr class="total-row">
-                <td colspan="3">එකතුව</td>
-                <td>46388.09</td>
-                <td>3247.17</td>
-                <td>43140.92</td>
-                <td colspan="6"></td>
-            </tr>
-        </tbody>
-    </table>
+<div id="fdPage" class="container hidden" style="width: 600px;">
+  <h2>FD දත්ත ඇතුළත් කිරීම</h2>
+  <select id="bankBelongs">
+    <option>පදියතලාව</option>
+    <option>පල්ලේගම</option>
+    <option>මහ සංගම් අරමුදල්</option>
+    <option>ණය සංරක්ෂණ අරමුදල්</option>
+    <option>සමුහ සංරක්ෂණ අරමුදල්</option>
+  </select>
+  <select id="investedBank">
+    <option>ලංකා බැංකුව</option>
+    <option>මහජන බැංකුව</option>
+    <option>ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
+    <option>නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
+    <option>රාජ්‍ය උකස් හා අයෝජන බැංකුව</option>
+    <option>ජාතික ඉතිරිකිරිමේ බැංකුව</option>
+  </select>
+  <input type="date" id="date" placeholder="ආයෝජනය කළ දිනය">
+  <input type="text" id="receiptNo" placeholder="රිසිට්පත් අංකය">
+  <input type="number" id="amount" placeholder="මුදල (රු)">
+  <input type="text" id="period" placeholder="කාලය (මාස)">
+  <input type="date" id="expiryDate" placeholder="කල්පිරෙන දිනය">
+  <input type="text" id="interestRate" placeholder="පොලි ප්‍රතිශතය %">
+  <input type="text" id="interestEarned" placeholder="ලද පොලිය">
+  <input type="text" id="checkNo" placeholder="චෙක්පත් අංකය">
+  
+  <button class="btn-add" onclick="submitData()">Add Data</button>
+  <button style="background:#e74c3c;" onclick="location.reload()">Back</button>
+</div>
 
-    <div class="footer-section">
-        <div class="signature-box">
-            ගිණුම් ලිපිකරු<br>
-            සමෘද්ධි මහ සංගමය/මූලස්ථාන කළමනාකරු<br>
-            නම:- <span class="dotted-line"></span><br>
-            අත්සන:- <span class="dotted-line"></span><br>
-            දිනය:- <span class="dotted-line"></span>
-        </div>
-        <div class="signature-box">
-            බලයලත් නිලධාරි සමෘද්ධි බැංකු<br>
-            මහ සංගමය/ප්‍රාදේශීය ලේකම්<br>
-            නම:- <span class="dotted-line"></span><br>
-            අත්සන:- <span class="dotted-line"></span><br>
-            දිනය:- <span class="dotted-line"></span>
-        </div>
-    </div>
+<script>
+  function login() {
+    var u = document.getElementById("user").value;
+    var p = document.getElementById("pass").value;
+    google.script.run.withSuccessHandler(function(res) {
+      if(res) {
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+      } else { alert("මුරපදය වැරදියි!"); }
+    }).checkLogin(u, p);
+  }
 
-    <script>
-        // වර්තමාන දිනය ලබාගෙන පෙන්වීම
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        let mm = today.getMonth() + 1; // මාසය 0 සිට ආරම්භ වන බැවින් 1ක් එකතු කරයි
-        let dd = today.getDate();
+  function showFDPage() {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("fdPage").classList.remove("hidden");
+  }
 
-        // දින සහ මාස 10 ට අඩු නම් ඉදිරියට 0 එකතු කිරීම
-        if (dd < 10) dd = '0' + dd;
-        if (mm < 10) mm = '0' + mm;
-
-        const formattedDate = yyyy + '-' + mm + '-' + dd;
-        document.getElementById('currentDate').innerText = formattedDate;
-    </script>
-
+  function submitData() {
+    var data = {
+      bankBelongs: document.getElementById("bankBelongs").value,
+      investedBank: document.getElementById("investedBank").value,
+      date: document.getElementById("date").value,
+      receiptNo: document.getElementById("receiptNo").value,
+      amount: document.getElementById("amount").value,
+      period: document.getElementById("period").value,
+      expiryDate: document.getElementById("expiryDate").value,
+      interestRate: document.getElementById("interestRate").value,
+      interestEarned: document.getElementById("interestEarned").value,
+      checkNo: document.getElementById("checkNo").value
+    };
+    
+    google.script.run.withSuccessHandler(function(res) {
+      alert(res);
+      document.getElementById("fdPage").reset();
+    }).addInvestmentData(data);
+  }
+</script>
 </body>
 </html>
