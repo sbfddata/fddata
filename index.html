@@ -2,80 +2,104 @@
 <html>
 <head>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; }
-    .container { width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px #ccc; }
-    input, select { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; }
-    button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; color: white; }
-    .btn-login { background-color: #2ecc71; }
-    .btn-add { background-color: #3498db; }
+    :root { --primary: #2c3e50; --secondary: #34495e; --accent: #27ae60; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
+    header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .container { max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     .hidden { display: none; }
-    header { background: #2c3e50; color: white; padding: 10px; }
+    
+    /* Dashboard Buttons */
+    .nav-box { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+    .btn { padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; }
+    .btn-fd { background: #3498db; }
+    .btn-print { background: #e67e22; }
+    .btn-save { background: var(--accent); width: 100%; margin-top: 10px; }
+    
+    /* Table Style */
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: var(--secondary); color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    
+    .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
   </style>
 </head>
 <body>
 
 <header>
-  <h3>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය - පදියතලාව</h3>
+  <h2>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය - පදියතලාව</h2>
 </header>
 
-<div id="loginPage" class="container">
-  <h2>Login</h2>
-  <input type="text" id="user" placeholder="පරිශීලක නාමය">
+<div id="loginPage" class="container" style="max-width: 400px; text-align: center;">
+  <h3>ඇතුල් වන්න</h3>
+  <input type="text" id="user" placeholder="පරිශීලක නාමය" style="margin-bottom: 10px;">
   <input type="password" id="pass" placeholder="මුරපදය">
-  <button class="btn-login" onclick="login()">පිවිසෙන්න</button>
+  <button class="btn btn-fd" style="width:100%; margin-top:15px;" onclick="login()">Login</button>
 </div>
 
-<div id="dashboard" class="container hidden">
-  <h2>Dashboard</h2>
-  <button class="btn-add" onclick="showFDPage()">FD Data</button>
-  <button style="background: #e67e22;" onclick="alert('Print List Loading...')">Print List</button>
+<div id="dashboard" class="container hidden" style="text-align: center;">
+  <h3>Dashboard - ප්‍රධාන පුවරුව</h3>
+  <div class="nav-box">
+    <button class="btn btn-fd" onclick="showPage('fdFormPage')">FD Data (දත්ත ඇතුළත් කිරීම)</button>
+    <button class="btn btn-print" onclick="loadPrintList()">Print List (වාර්තා බැලීම)</button>
+  </div>
 </div>
 
-<div id="fdPage" class="container hidden" style="width: 600px;">
-  <h2>FD දත්ත ඇතුළත් කිරීම</h2>
-  <select id="bankBelongs">
-    <option>පදියතලාව</option>
-    <option>පල්ලේගම</option>
-    <option>මහ සංගම් අරමුදල්</option>
-    <option>ණය සංරක්ෂණ අරමුදල්</option>
-    <option>සමුහ සංරක්ෂණ අරමුදල්</option>
-  </select>
-  <select id="investedBank">
-    <option>ලංකා බැංකුව</option>
-    <option>මහජන බැංකුව</option>
-    <option>ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
-    <option>නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option>
-    <option>රාජ්‍ය උකස් හා අයෝජන බැංකුව</option>
-    <option>ජාතික ඉතිරිකිරිමේ බැංකුව</option>
-  </select>
-  <input type="date" id="date" placeholder="ආයෝජනය කළ දිනය">
-  <input type="text" id="receiptNo" placeholder="රිසිට්පත් අංකය">
-  <input type="number" id="amount" placeholder="මුදල (රු)">
-  <input type="text" id="period" placeholder="කාලය (මාස)">
-  <input type="date" id="expiryDate" placeholder="කල්පිරෙන දිනය">
-  <input type="text" id="interestRate" placeholder="පොලි ප්‍රතිශතය %">
-  <input type="text" id="interestEarned" placeholder="ලද පොලිය">
-  <input type="text" id="checkNo" placeholder="චෙක්පත් අංකය">
-  
-  <button class="btn-add" onclick="submitData()">Add Data</button>
-  <button style="background:#e74c3c;" onclick="location.reload()">Back</button>
+<div id="fdFormPage" class="container hidden">
+  <h3>නව ආයෝජනයක් ඇතුළත් කිරීම</h3>
+  <div class="form-group">
+    <div>
+      <label>ආයෝජන මුදල අයත් බැංකුව</label>
+      <select id="bankBelongs">
+        <option>පදියතලාව</option><option>පල්ලේගම</option><option>මහ සංගම් අරමුදල්</option>
+        <option>ණය සංරක්ෂණ අරමුදල්</option><option>සමුහ සංරක්ෂණ අරමුදල්</option>
+      </select>
+    </div>
+    <div>
+      <label>ආයෝජනය කළ බැංකුව</label>
+      <select id="investedBank">
+        <option>ලංකා බැංකුව</option><option>මහජන බැංකුව</option><option>ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
+        <option>නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option><option>රාජ්‍ය උකස් හා අයෝජන බැංකුව</option><option>ජාතික ඉතිරිකිරිමේ බැංකුව</option>
+      </select>
+    </div>
+    <div><label>ආයෝජනය කළ දිනය</label><input type="date" id="date"></div>
+    <div><label>රිසිට්පත් අංකය</label><input type="text" id="receiptNo"></div>
+    <div><label>ආයෝජන මුදල (රු)</label><input type="number" id="amount"></div>
+    <div><label>කාලය (මාස)</label><input type="number" id="period"></div>
+    <div><label>කල්පිරෙන දිනය</label><input type="date" id="expiryDate"></div>
+    <div><label>පොලි ප්‍රතිශතය %</label><input type="text" id="interestRate"></div>
+    <div><label>ලද පොලිය</label><input type="number" id="interestEarned"></div>
+    <div><label>චෙක්පත් අංකය</label><input type="text" id="checkNo"></div>
+  </div>
+  <button class="btn btn-save" onclick="submitData()">Add Data (දත්ත සුරකින්න)</button>
+  <button class="btn" style="background:#95a5a6; width:100%; margin-top:5px;" onclick="showPage('dashboard')">Back to Dashboard</button>
+</div>
+
+<div id="printListPage" class="container hidden" style="max-width: 95%;">
+  <h3>ආයෝජන ලැයිස්තුව</h3>
+  <div id="tableContainer" style="overflow-x: auto;">Loading...</div>
+  <button class="btn" style="background:#95a5a6; margin-top:15px;" onclick="showPage('dashboard')">Back to Dashboard</button>
+  <button class="btn btn-print" onclick="window.print()">Print Page</button>
 </div>
 
 <script>
+  function showPage(pageId) {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('fdFormPage').classList.add('hidden');
+    document.getElementById('printListPage').classList.add('hidden');
+    document.getElementById(pageId).classList.remove('hidden');
+  }
+
   function login() {
     var u = document.getElementById("user").value;
     var p = document.getElementById("pass").value;
     google.script.run.withSuccessHandler(function(res) {
-      if(res) {
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("dashboard").classList.remove("hidden");
-      } else { alert("මුරපදය වැරදියි!"); }
+      if(res) showPage('dashboard');
+      else alert("පරිශීලක නාමය හෝ මුරපදය වැරදියි!");
     }).checkLogin(u, p);
-  }
-
-  function showFDPage() {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("fdPage").classList.remove("hidden");
   }
 
   function submitData() {
@@ -91,12 +115,39 @@
       interestEarned: document.getElementById("interestEarned").value,
       checkNo: document.getElementById("checkNo").value
     };
-    
     google.script.run.withSuccessHandler(function(res) {
       alert(res);
-      document.getElementById("fdPage").reset();
+      showPage('dashboard');
     }).addInvestmentData(data);
   }
+
+  function loadPrintList() {
+    showPage('printListPage');
+    google.script.run.withSuccessHandler(function(data) {
+      var html = '<table><tr>';
+      for(var i=0; i<data[0].length; i++) html += '<th>' + data[0][i] + '</th>';
+      html += '<th>ක්‍රියාවන්</th></tr>';
+      
+      for(var i=1; i<data.length; i++) {
+        html += '<tr>';
+        for(var j=0; j<data[i].length; j++) html += '<td>' + data[i][j] + '</td>';
+        html += '<td><button onclick="deleteEntry('+i+')" style="color:red; cursor:pointer;">Delete</button></td>';
+        html += '</tr>';
+      }
+      html += '</table>';
+      document.getElementById("tableContainer").innerHTML = html;
+    }).getFDData();
+  }
+
+  function deleteEntry(index) {
+    if(confirm("මෙම දත්තය මකා දැමීමට අවශ්‍යද?")) {
+      google.script.run.withSuccessHandler(function(res) {
+        alert(res);
+        loadPrintList();
+      }).deleteRow(index);
+    }
+  }
 </script>
+
 </body>
 </html>
