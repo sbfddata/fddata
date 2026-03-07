@@ -1,153 +1,236 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
-  <style>
-    :root { --primary: #2c3e50; --secondary: #34495e; --accent: #27ae60; }
-    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
-    header { background: var(--primary); color: white; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    .container { max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .hidden { display: none; }
-    
-    /* Dashboard Buttons */
-    .nav-box { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
-    .btn { padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; }
-    .btn-fd { background: #3498db; }
-    .btn-print { background: #e67e22; }
-    .btn-save { background: var(--accent); width: 100%; margin-top: 10px; }
-    
-    /* Table Style */
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: var(--secondary); color: white; }
-    tr:nth-child(even) { background: #f9f9f9; }
-    
-    .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
-    label { font-weight: bold; display: block; margin-bottom: 5px; }
-    input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment System Pro - Padiyathalawa</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { background: white; max-width: 850px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .header { background: #90caf9; padding: 20px; text-align: center; font-size: 18pt; font-weight: bold; border-radius: 12px 12px 0 0; margin: -25px -25px 20px -25px; }
+        
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+        button { padding: 12px; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; transition: 0.3s; }
+        .btn-search { background: #f1c40f; color: black; width: 100%; margin-top: 10px; }
+        .btn-add { background: #2ecc71; }
+        .btn-del { background: #e74c3c; }
+        .btn-single { background: #9b59b6; }
+        .btn-list { background: #34495e; }
+
+        #login-area { text-align: center; padding: 50px 0; }
+        #system-area { display: none; }
+
+        /* මුද්‍රණ වාර්තා සඳහා styles */
+        .report-section { display: none; background: white; padding: 15mm; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid black; padding: 6px; text-align: center; font-size: 10px; }
+        .bold { font-weight: bold; }
+
+        @media print {
+            .container, .header, #login-area { display: none !important; }
+            .report-section { display: block !important; }
+            body { background: white; padding: 0; }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <h2>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය - පදියතලාව</h2>
-</header>
+<div class="container">
+    <div class="header">සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය - පදියතලාව</div>
 
-<div id="loginPage" class="container" style="max-width: 400px; text-align: center;">
-  <h3>ඇතුල් වන්න</h3>
-  <input type="text" id="user" placeholder="පරිශීලක නාමය" style="margin-bottom: 10px;">
-  <input type="password" id="pass" placeholder="මුරපදය">
-  <button class="btn btn-fd" style="width:100%; margin-top:15px;" onclick="login()">Login</button>
-</div>
-
-<div id="dashboard" class="container hidden" style="text-align: center;">
-  <h3>Dashboard - ප්‍රධාන පුවරුව</h3>
-  <div class="nav-box">
-    <button class="btn btn-fd" onclick="showPage('fdFormPage')">FD Data (දත්ත ඇතුළත් කිරීම)</button>
-    <button class="btn btn-print" onclick="loadPrintList()">Print List (වාර්තා බැලීම)</button>
-  </div>
-</div>
-
-<div id="fdFormPage" class="container hidden">
-  <h3>නව ආයෝජනයක් ඇතුළත් කිරීම</h3>
-  <div class="form-group">
-    <div>
-      <label>ආයෝජන මුදල අයත් බැංකුව</label>
-      <select id="bankBelongs">
-        <option>පදියතලාව</option><option>පල්ලේගම</option><option>මහ සංගම් අරමුදල්</option>
-        <option>ණය සංරක්ෂණ අරමුදල්</option><option>සමුහ සංරක්ෂණ අරමුදල්</option>
-      </select>
+    <div id="login-area">
+        <h3 style="color: purple;">LOGIN</h3>
+        <input type="text" id="user" placeholder="UserName">
+        <input type="password" id="pass" placeholder="Password">
+        <button style="background: #00bcd4; width: 100%; margin-top: 15px;" onclick="doLogin()">Login</button>
     </div>
-    <div>
-      <label>ආයෝජනය කළ බැංකුව</label>
-      <select id="investedBank">
-        <option>ලංකා බැංකුව</option><option>මහජන බැංකුව</option><option>ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
-        <option>නිවාස සංවර්ධන මූල්‍ය සංස්ථාව</option><option>රාජ්‍ය උකස් හා අයෝජන බැංකුව</option><option>ජාතික ඉතිරිකිරිමේ බැංකුව</option>
-      </select>
-    </div>
-    <div><label>ආයෝජනය කළ දිනය</label><input type="date" id="date"></div>
-    <div><label>රිසිට්පත් අංකය</label><input type="text" id="receiptNo"></div>
-    <div><label>ආයෝජන මුදල (රු)</label><input type="number" id="amount"></div>
-    <div><label>කාලය (මාස)</label><input type="number" id="period"></div>
-    <div><label>කල්පිරෙන දිනය</label><input type="date" id="expiryDate"></div>
-    <div><label>පොලි ප්‍රතිශතය %</label><input type="text" id="interestRate"></div>
-    <div><label>ලද පොලිය</label><input type="number" id="interestEarned"></div>
-    <div><label>චෙක්පත් අංකය</label><input type="text" id="checkNo"></div>
-  </div>
-  <button class="btn btn-save" onclick="submitData()">Add Data (දත්ත සුරකින්න)</button>
-  <button class="btn" style="background:#95a5a6; width:100%; margin-top:5px;" onclick="showPage('dashboard')">Back to Dashboard</button>
-</div>
 
-<div id="printListPage" class="container hidden" style="max-width: 95%;">
-  <h3>ආයෝජන ලැයිස්තුව</h3>
-  <div id="tableContainer" style="overflow-x: auto;">Loading...</div>
-  <button class="btn" style="background:#95a5a6; margin-top:15px;" onclick="showPage('dashboard')">Back to Dashboard</button>
-  <button class="btn btn-print" onclick="window.print()">Print Page</button>
+    <div id="system-area">
+        <div class="search-box">
+            <label>Enter receipt number (colD):</label>
+            <input type="text" id="searchId" placeholder="සෙවීමට රිසිට්පත් අංකය ඇතුළත් කරන්න">
+            <button class="btn-search" onclick="process('searchData')">🔍 දත්ත සොයන්න</button>
+        </div>
+        <hr>
+
+        <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
+        <select id="colA">
+            <option value="පදියතලාව සමෘද්ධි බැංකුව">පදියතලාව සමෘද්ධි බැංකුව</option>
+            <option value="පල්ලේගම සමෘද්ධි බැංකුව">පල්ලේගම සමෘද්ධි බැංකුව</option>
+            <option value="මහ සංගම් අරමුදල">මහ සංගම් අරමුදල</option>
+            <option value="ණය සංරක්ෂණ අරමුදල්">ණය සංරක්ෂණ අරමුදල්</option>
+            <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
+        </select>
+
+        <label>ආයෝජනය කළ බැංකුවේ නම:</label>
+        <select id="colB">
+            <option value="ලංකා බැංකුව">ලංකා බැංකුව</option>
+            <option value="මහජන බැංකුව">මහජන බැංකුව</option>
+            <option value="ප්‍රාදේශීය සංවර්ධන බැංකුව">ප්‍රාදේශීය සංවර්ධන බැංකුව</option>
+            <option value="NSB බැංකුව">NSB බැංකුව</option>
+        </select>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;"><label>ආයෝජන කළ දිනය:</label><input type="date" id="colC" onchange="calculateDuration()"></div>
+            <div style="flex: 1;"><label>ආයෝජන රිසිට්පත් අංකය:</label><input type="text" id="colD"></div>
+        </div>
+
+        <label>ආයෝජන මුදල (රු):</label>
+        <input type="number" id="colE">
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;"><label>ආයෝජනය කල්පිරෙන දිනය:</label><input type="date" id="colG" onchange="calculateDuration()"></div>
+            <div style="flex: 1;"><label>ආයෝජන කාලය:</label><input type="text" id="colF" placeholder="උදා: මාස 03"></div>
+        </div>
+
+        <label>ආයෝජන පොලි ප්‍රතිශතය (%):</label>
+        <input type="text" id="colH">
+
+        <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label>
+        <input type="number" id="colI">
+
+        <label>චෙක්පත් අංකය:</label>
+        <input type="text" id="colJ">
+
+        <div class="btn-grid">
+            <button class="btn-add" onclick="process('addData')">Data Add</button>
+            <button class="btn-del" onclick="process('deleteData')">Data Delete</button>
+            <button class="btn-single" onclick="printSingle()">🖨️ ඇමුණුම 4 (Single Print)</button>
+            <button class="btn-list" onclick="printList()">📋 List Print (ලැයිස්තුව)</button>
+        </div>
+    </div>
+
+    <div id="single-report" class="report-section">
+        <div style="display: flex; justify-content: space-between;">
+            <div>කළමනාකරු,<br><span id="sAcc"></span>.</div>
+            <div style="text-align: left;">සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="sDate"></span></div>
+        </div>
+        <h3 style="text-align: center; text-decoration: underline;">කරන ලද ආයෝජන රු. <span id="sAmt"></span> පොලිය හා මුදල එවිමේ නිවේදනය</h3>
+        <p class="bold"><span id="sBank"></span> - <span id="sReceipt"></span></p>
+        <p>ඉහත සඳහන් ආයෝජනයට අදාලව ලද පොලිය සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="sCheck" class="bold"></span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+        <table>
+            <tr><td style="text-align: left;">1. ලද මුළු පොලිය (රු)</td><td id="sTotalI" style="text-align: right;"></td></tr>
+            <tr><td style="text-align: left;">2. අඩු කළ රඳවාගත් පොලිය (රු)</td><td id="sTaxI" style="text-align: right;"></td></tr>
+            <tr><td style="text-align: left;">3. එවන ශුද්ධ පොලිය (රු)</td><td id="sNetI" style="text-align: right;"></td></tr>
+        </table>
+        <p style="margin-top: 40px;">ගිණුම් ලිපිකරු ............................. &nbsp;&nbsp;&nbsp;&nbsp; බලයලත් නිලධාරි .............................</p>
+    </div>
+
+    <div id="list-report" class="report-section">
+        <div style="display: flex; justify-content: space-between;">
+            <div>කළමනාකරු, සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව.</div>
+            <div style="text-align: left;">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය: <span id="lDate"></span></div>
+        </div>
+        <h3 style="text-align: center; text-decoration: underline;">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="6">කල්පිරුණු ආයෝජන විස්තර</th>
+                    <th colspan="6">නැවත ආයෝජන විස්තර</th>
+                </tr>
+                <tr>
+                    <th>මුදල</th><th>බැංකුව</th><th>රිසිට්පත</th><th>මුළු පොලිය</th><th>රඳවාගත්</th><th>ශුද්ධ පොලිය</th>
+                    <th>දිනය</th><th>මුදල</th><th>වර්ගය</th><th>කාලය</th><th>%</th><th>කල්පිරෙන දිනය</th>
+                </tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-  function showPage(pageId) {
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('fdFormPage').classList.add('hidden');
-    document.getElementById('printListPage').classList.add('hidden');
-    document.getElementById(pageId).classList.remove('hidden');
-  }
+    const SCRIPT_URL = "ඔබේ_DEPLOY_URL_එක_මෙතැනට_දමන්න";
 
-  function login() {
-    var u = document.getElementById("user").value;
-    var p = document.getElementById("pass").value;
-    google.script.run.withSuccessHandler(function(res) {
-      if(res) showPage('dashboard');
-      else alert("පරිශීලක නාමය හෝ මුරපදය වැරදියි!");
-    }).checkLogin(u, p);
-  }
-
-  function submitData() {
-    var data = {
-      bankBelongs: document.getElementById("bankBelongs").value,
-      investedBank: document.getElementById("investedBank").value,
-      date: document.getElementById("date").value,
-      receiptNo: document.getElementById("receiptNo").value,
-      amount: document.getElementById("amount").value,
-      period: document.getElementById("period").value,
-      expiryDate: document.getElementById("expiryDate").value,
-      interestRate: document.getElementById("interestRate").value,
-      interestEarned: document.getElementById("interestEarned").value,
-      checkNo: document.getElementById("checkNo").value
-    };
-    google.script.run.withSuccessHandler(function(res) {
-      alert(res);
-      showPage('dashboard');
-    }).addInvestmentData(data);
-  }
-
-  function loadPrintList() {
-    showPage('printListPage');
-    google.script.run.withSuccessHandler(function(data) {
-      var html = '<table><tr>';
-      for(var i=0; i<data[0].length; i++) html += '<th>' + data[0][i] + '</th>';
-      html += '<th>ක්‍රියාවන්</th></tr>';
-      
-      for(var i=1; i<data.length; i++) {
-        html += '<tr>';
-        for(var j=0; j<data[i].length; j++) html += '<td>' + data[i][j] + '</td>';
-        html += '<td><button onclick="deleteEntry('+i+')" style="color:red; cursor:pointer;">Delete</button></td>';
-        html += '</tr>';
-      }
-      html += '</table>';
-      document.getElementById("tableContainer").innerHTML = html;
-    }).getFDData();
-  }
-
-  function deleteEntry(index) {
-    if(confirm("මෙම දත්තය මකා දැමීමට අවශ්‍යද?")) {
-      google.script.run.withSuccessHandler(function(res) {
-        alert(res);
-        loadPrintList();
-      }).deleteRow(index);
+    function doLogin() {
+        let u = document.getElementById('user').value;
+        let p = document.getElementById('pass').value;
+        fetch(`${SCRIPT_URL}?action=login&username=${u}&password=${p}`, {method: 'POST'})
+        .then(r => r.text()).then(res => {
+            if(res.trim() === "success") {
+                document.getElementById('login-area').style.display='none';
+                document.getElementById('system-area').style.display='block';
+            } else { alert("ලොගින් වීමට නොහැක!"); }
+        });
     }
-  }
-</script>
 
+    async function process(action) {
+        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
+        let params = new URLSearchParams();
+        fields.forEach(f => params.append(f, document.getElementById(f).value));
+        params.append('action', action);
+
+        if(action === 'searchData') {
+            let sId = document.getElementById('searchId').value;
+            if(!sId) return alert("රිසිට්පත් අංකය ඇතුළත් කරන්න!");
+            params.set('colD', sId);
+        }
+
+        let res = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+        let txt = await res.text();
+        
+        if(action === 'searchData' && txt !== "Not Found") {
+            let data = JSON.parse(txt);
+            fields.forEach((f, i) => {
+                if((i===2 || i===6) && data[i]) document.getElementById(f).value = new Date(data[i]).toISOString().split('T')[0];
+                else document.getElementById(f).value = data[i] || "";
+            });
+            alert("දත්ත සොයාගත්තා!");
+        } else {
+            alert("සාර්ථකයි: " + txt);
+        }
+    }
+
+    function printSingle() {
+        document.getElementById('sDate').innerText = new Date().toISOString().split('T')[0];
+        document.getElementById('sAcc').innerText = document.getElementById('colA').value;
+        document.getElementById('sBank').innerText = document.getElementById('colB').value;
+        document.getElementById('sReceipt').innerText = document.getElementById('colD').value;
+        let amt = parseFloat(document.getElementById('colE').value) || 0;
+        document.getElementById('sAmt').innerText = amt.toLocaleString();
+        
+        let totalI = parseFloat(document.getElementById('colI').value) || 0;
+        let tax = totalI * 0.07;
+        document.getElementById('sTotalI').innerText = totalI.toFixed(2);
+        document.getElementById('sTaxI').innerText = tax.toFixed(2);
+        document.getElementById('sNetI').innerText = (totalI - tax).toFixed(2);
+        document.getElementById('sCheck').innerText = document.getElementById('colJ').value;
+        
+        window.print();
+    }
+
+    async function printList() {
+        document.getElementById('lDate').innerText = new Date().toISOString().split('T')[0];
+        let res = await fetch(`${SCRIPT_URL}?action=getAllData`, {method: 'POST'});
+        let data = await res.json();
+        let body = document.getElementById('listBody');
+        body.innerHTML = "";
+
+        for(let i=1; i<data.length; i++) {
+            let fullI = parseFloat(data[i][8]) || 0;
+            let tax = fullI * 0.07;
+            body.innerHTML += `<tr>
+                <td>${data[i][4]}</td><td>${data[i][1]}</td><td>${data[i][3]}</td>
+                <td>${fullI.toFixed(2)}</td><td>${tax.toFixed(2)}</td><td>${(fullI - tax).toFixed(2)}</td>
+                <td>${new Date(data[i][2]).toLocaleDateString()}</td><td>${data[i][4]}</td><td>ස්ථීර</td>
+                <td>${data[i][5]}</td><td>${data[i][7]}</td><td>${new Date(data[i][6]).toLocaleDateString()}</td>
+            </tr>`;
+        }
+        window.print();
+    }
+
+    function calculateDuration() {
+        let d1 = new Date(document.getElementById('colC').value);
+        let d2 = new Date(document.getElementById('colG').value);
+        if(!isNaN(d1) && !isNaN(d2)) {
+            let diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+            if(diff > 80 && diff < 100) document.getElementById('colF').value = "මාස 03";
+            else if(diff > 25 && diff < 35) document.getElementById('colF').value = "මාස 01";
+            else document.getElementById('colF').value = diff + " දින";
+        }
+    }
+</script>
 </body>
 </html>
