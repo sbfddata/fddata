@@ -205,15 +205,31 @@
 </div>
 
 <script>
-    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. අලුතින් Deploy කළේ නම් අලුත් එක මෙතනට දමන්න.
+    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqrY6l9vGD5MOcTiD5z_D_IOoXbsdje0vhXYdEQI9VYvUWPL7duQbtot0dtoBAnoIOQQ/exec";
+
+    // --- අලුත් Date Helper Function එක (Timezone ගැටලුව සඳහා) ---
+    function getLocalDateFormat(dateObj) {
+        if (!dateObj || isNaN(dateObj)) return "";
+        let yyyy = dateObj.getFullYear();
+        let mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        let dd = String(dateObj.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        let d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return getLocalDateFormat(d);
+    }
+    // -------------------------------------------------------------
 
     function doLogin() {
         try {
             let u = document.getElementById('user').value;
             let p = document.getElementById('pass').value;
             
-            // දත්ත Form Body එකක් ලෙස යැවීමට සකස් කිරීම
             let params = new URLSearchParams();
             params.append('action', 'login');
             params.append('username', u);
@@ -222,10 +238,7 @@
             let btn = document.getElementById('login-btn');
             btn.innerText = "Logging in...";
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: params
-            })
+            fetch(SCRIPT_URL, { method: 'POST', body: params })
             .then(r => r.text())
             .then(res => {
                 btn.innerText = "Login";
@@ -282,7 +295,8 @@
         await process('addData');
         setPrintStyle('portrait');
 
-        document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
+        // Local Date Format එක යොදා ඇත
+        document.getElementById('rDate').innerText = getLocalDateFormat(new Date());
         document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
 
         const amt = parseFloat(document.getElementById('colE').value) || 0;
@@ -306,13 +320,6 @@
         document.body.className = '';
     }
 
-    function formatDate(dateStr) {
-        if (!dateStr) return "";
-        let d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        return d.toISOString().split('T')[0];
-    }
-
     function formatCurrency(num) {
         let n = parseFloat(num) || 0;
         return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -321,15 +328,14 @@
     async function generatePrintList() {
         try {
             document.querySelector('.print-list-btn').innerText = "Loading Data...";
-            document.getElementById('currentDateList').innerText = new Date().toISOString().split('T')[0];
+            
+            // Local Date Format එක යොදා ඇත
+            document.getElementById('currentDateList').innerText = getLocalDateFormat(new Date());
 
             let params = new URLSearchParams();
             params.append('action', 'getPrintData');
 
-            let response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: params
-            });
+            let response = await fetch(SCRIPT_URL, { method: 'POST', body: params });
             let data = await response.json();
             
             let tbody = document.getElementById('printListBody');
@@ -392,10 +398,7 @@
             let params = new URLSearchParams();
             params.append('action', 'clearPrintData');
 
-            let response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: params
-            });
+            let response = await fetch(SCRIPT_URL, { method: 'POST', body: params });
             let text = await response.text();
             
             if (text.includes("success")) {
@@ -422,10 +425,7 @@
         params.append('action', actionName);
 
         try {
-            let response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: params
-            });
+            let response = await fetch(SCRIPT_URL, { method: 'POST', body: params });
             let text = await response.text();
             try {
                 let data = JSON.parse(text);
@@ -434,7 +434,8 @@
                         let element = document.getElementById(f);
                         if((i === 2 || i === 6) && data[i]) { 
                             let dateVal = new Date(data[i]);
-                            if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
+                            // Local Date Format එක යොදා ඇත
+                            if (!isNaN(dateVal)) element.value = getLocalDateFormat(dateVal);
                         } else { element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : ""; }
                     });
                     alert("Data found!");
