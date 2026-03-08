@@ -17,8 +17,6 @@
         .add { background: #2ecc71; } 
         .delete { background: #e74c3c; }
         .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; }
-        
-        /* අලුත් Button 2 */
         .print-list-btn { background: #3498db; }
         .clear-list-btn { background: #d35400; }
 
@@ -55,7 +53,6 @@
         @media print {
             body { background: none; margin: 0; padding: 0; }
             .header, .container { display: none !important; }
-            /* Control visibility based on which print button was clicked */
             body.printing-single #report-area { display: block !important; }
             body.printing-list #print-list-area { display: block !important; }
         }
@@ -81,7 +78,6 @@
         <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     </div>
     <hr>
-    <!-- පෝරමයේ ආදානයන් (Inputs) -->
     <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
     <select id="colA" required>
         <option value="" disabled selected hidden>Select Investment Account...</option>
@@ -130,12 +126,9 @@
     </div>
 </div>
 
-<!-- 1. Single Receipt Report -->
 <div id="report-area">
     <div class="header-container-single">
-        <div class="header-left-single">
-            <p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p>
-        </div>
+        <div class="header-left-single"><p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p></div>
         <div class="header-right-single">
             <div style="text-align: right; width: 100%; margin-bottom: 20px;"><h5 style="font-size: 14px; font-weight: bold; margin: 0;">ඇමුණුම 4</h5></div>
             <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span></p>
@@ -163,10 +156,13 @@
     </div>
 </div>
 
-<!-- 2. New Print List Report (Landscape) -->
 <div id="print-list-area">
     <div class="header-container">
-        <div class="header-left">කළමනාකරු,<br>සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව</div>
+        <!-- මෙතන තමයි ඔබගේ අලුත් වෙනස සිදු කර ඇත්තේ -->
+        <div class="header-left">
+            කළමනාකරු,<br>
+            <span id="listAccountDisplay"></span>
+        </div>
         <div class="header-right">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="currentDateList"></span></div>
     </div>
     <div class="title">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</div>
@@ -192,9 +188,7 @@
                 <th>ආයෝජනය කල්පිරෙන දිනය</th>
             </tr>
         </thead>
-        <tbody id="printListBody">
-            <!-- Data will be injected here automatically -->
-        </tbody>
+        <tbody id="printListBody"></tbody>
         <tfoot>
             <tr class="total-row">
                 <td colspan="3">එකතුව</td>
@@ -212,8 +206,7 @@
 </div>
 
 <script>
-    // ඔබගේ Script URL එක මෙහි ඇතුලත් කරන්න
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww_qlC3pCEWGF3-cK5iVtVSGxwdAh9iu6vBnS2zJAMvy-mNlUxcj1XERJO7v8TthqoXA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwD1IDQ2FxJZmWjWp2zXr91MOyotgZou_60uSIf_f2XR5PuKyWcW05ieNN2LM-U1uYfGg/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -244,7 +237,6 @@
         }
     }
 
-    // Set Page Style dynamically (Landscape or Portrait)
     function setPrintStyle(orientation) {
         let style = document.getElementById('dynamicPrintStyle');
         if (!style) {
@@ -261,7 +253,6 @@
         }
     }
 
-    // 1. Single Receipt Print
     async function generateReport() {
         await process('addData');
         setPrintStyle('portrait');
@@ -287,10 +278,9 @@
         document.getElementById('rMaturityDate').innerText = document.getElementById('colG').value;
 
         window.print();
-        document.body.className = ''; // Reset class after printing
+        document.body.className = '';
     }
 
-    // Date formatting helper
     function formatDate(dateStr) {
         if (!dateStr) return "";
         let d = new Date(dateStr);
@@ -298,18 +288,14 @@
         return d.toISOString().split('T')[0];
     }
 
-    // Number formatting helper
     function formatCurrency(num) {
         let n = parseFloat(num) || 0;
         return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    // 2. Fetch and Print List (Landscape)
     async function generatePrintList() {
         try {
             document.querySelector('.print-list-btn').innerText = "Loading Data...";
-            
-            // Set Today's Date
             document.getElementById('currentDateList').innerText = new Date().toISOString().split('T')[0];
 
             let response = await fetch(`${SCRIPT_URL}?action=getPrintData`, {method: 'POST'});
@@ -322,6 +308,13 @@
             if (data.length === 0) {
                 alert("Print Sheet හි දත්ත නොමැත!");
             } else {
+                // දත්ත ගොනුවේ ඇති පළමු පේළියේ 13වන තීරුවෙන් බැංකුවේ නම ගනී. එසේ නොමැතිනම් Dropdown එකේ ඇති නම ගනී.
+                let branchName = data[0][12]; 
+                if (!branchName) {
+                    branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
+                }
+                document.getElementById('listAccountDisplay').innerText = branchName;
+
                 data.forEach(row => {
                     let rTotalInt = parseFloat(row[3]) || 0;
                     let rDedInt = parseFloat(row[4]) || 0;
@@ -349,17 +342,14 @@
                 });
             }
 
-            // Update Totals
             document.getElementById('totInt').innerText = formatCurrency(sumInt);
             document.getElementById('totDed').innerText = formatCurrency(sumDed);
             document.getElementById('totSent').innerText = formatCurrency(sumSent);
 
             document.querySelector('.print-list-btn').innerText = "📋 Print List (Landscape)";
-
-            // Trigger Print
             setPrintStyle('landscape');
             window.print();
-            document.body.className = ''; // Reset class
+            document.body.className = '';
 
         } catch (err) {
             alert("Error Loading Print Data: " + err.message);
@@ -367,10 +357,8 @@
         }
     }
 
-    // 3. Clear Print Sheet Data
     async function clearPrintSheet() {
-        if (!confirm("මෙමගින් 'Print' Sheet එකේ ඇති සියලුම දත්ත මකා දැමේ. (FD Data සුරක්ෂිත වේ). ඔබට තහවුරුද?")) return;
-        
+        if (!confirm("මෙමගින් 'Print' Sheet එකේ ඇති සියලුම දත්ත මකා දැමේ. ඔබට තහවුරුද?")) return;
         try {
             document.querySelector('.clear-list-btn').innerText = "Clearing...";
             let response = await fetch(`${SCRIPT_URL}?action=clearPrintData`, {method: 'POST'});
@@ -378,14 +366,9 @@
             
             if (text.includes("success")) {
                 alert("Print Sheet හි දත්ත සාර්ථකව මකා දමන ලදි!");
-            } else {
-                alert("දෝෂයක්: " + text);
-            }
-        } catch (err) {
-            alert("Error!: " + err.message);
-        } finally {
-            document.querySelector('.clear-list-btn').innerText = "🗑️ All Delete (Print Data)";
-        }
+            } else { alert("දෝෂයක්: " + text); }
+        } catch (err) { alert("Error!: " + err.message); } 
+        finally { document.querySelector('.clear-list-btn').innerText = "🗑️ All Delete (Print Data)"; }
     }
 
     async function process(actionName) {
@@ -411,22 +394,6 @@
                         if((i === 2 || i === 6) && data[i]) { 
                             let dateVal = new Date(data[i]);
                             if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
-                        } else {
-                            element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
-                        }
+                        } else { element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : ""; }
                     });
                     alert("Data found!");
-                }
-            } catch(e) {
-                if(text.toLowerCase().includes("success")) {
-                    alert("Operation Successful!");
-                    if(actionName !== 'searchData' && actionName !== 'addData') {
-                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
-                    }
-                } else { alert("Response: " + text); }
-            }
-        } catch(err) { alert("Error!: " + err.message); }
-    }
-</script>
-</body>
-</html>
