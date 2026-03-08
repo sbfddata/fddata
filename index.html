@@ -43,8 +43,11 @@
         #print-list-area th { background-color: #f2f2f2; }
         #print-list-area .total-row { font-weight: bold; background-color: #fafafa; }
         #print-list-area .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-        #print-list-area .header-left { text-align: left; }
+        
+        /* වම්පස ලිපිනය පහළට ගෙන ඇත (දකුණු පසට වඩා ඉහළින් නොපෙනෙන සේ) */
+        #print-list-area .header-left { text-align: left; margin-top: 40px; } 
         #print-list-area .header-right { text-align: left; min-width: 150px; }
+        
         #print-list-area .title { text-align: center; font-weight: bold; text-decoration: underline; font-size: 16px; margin: 20px 0; display: block; }
         #print-list-area .footer-section { display: flex; justify-content: space-between; margin-top: 50px; }
         #print-list-area .signature-box { width: 45%; }
@@ -208,7 +211,6 @@
     // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqrY6l9vGD5MOcTiD5z_D_IOoXbsdje0vhXYdEQI9VYvUWPL7duQbtot0dtoBAnoIOQQ/exec";
 
-    // --- අලුත් Date Helper Function එක (Timezone ගැටලුව සඳහා) ---
     function getLocalDateFormat(dateObj) {
         if (!dateObj || isNaN(dateObj)) return "";
         let yyyy = dateObj.getFullYear();
@@ -223,7 +225,6 @@
         if (isNaN(d)) return dateStr;
         return getLocalDateFormat(d);
     }
-    // -------------------------------------------------------------
 
     function doLogin() {
         try {
@@ -295,7 +296,6 @@
         await process('addData');
         setPrintStyle('portrait');
 
-        // Local Date Format එක යොදා ඇත
         document.getElementById('rDate').innerText = getLocalDateFormat(new Date());
         document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
 
@@ -329,7 +329,6 @@
         try {
             document.querySelector('.print-list-btn').innerText = "Loading Data...";
             
-            // Local Date Format එක යොදා ඇත
             document.getElementById('currentDateList').innerText = getLocalDateFormat(new Date());
 
             let params = new URLSearchParams();
@@ -434,7 +433,6 @@
                         let element = document.getElementById(f);
                         if((i === 2 || i === 6) && data[i]) { 
                             let dateVal = new Date(data[i]);
-                            // Local Date Format එක යොදා ඇත
                             if (!isNaN(dateVal)) element.value = getLocalDateFormat(dateVal);
                         } else { element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : ""; }
                     });
