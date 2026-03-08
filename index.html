@@ -43,11 +43,8 @@
         #print-list-area th { background-color: #f2f2f2; }
         #print-list-area .total-row { font-weight: bold; background-color: #fafafa; }
         #print-list-area .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-        
-        /* වම්පස ලිපිනය පහළට ගෙන ඇත (දකුණු පසට වඩා ඉහළින් නොපෙනෙන සේ) */
         #print-list-area .header-left { text-align: left; margin-top: 40px; } 
         #print-list-area .header-right { text-align: left; min-width: 150px; }
-        
         #print-list-area .title { text-align: center; font-weight: bold; text-decoration: underline; font-size: 16px; margin: 20px 0; display: block; }
         #print-list-area .footer-section { display: flex; justify-content: space-between; margin-top: 50px; }
         #print-list-area .signature-box { width: 45%; }
@@ -168,7 +165,10 @@
         <div class="header-right">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="currentDateList"></span></div>
     </div>
     <div class="title">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</div>
-    <p>පහත සඳහන් ආයෝජන මුදල්වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවා ගත යුතු මුදල අඩුකිරීමෙන් පසු ........................ දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+    
+    <!-- චෙක්පත් අංකය ඇතුළත් කිරීම සඳහා ස්ථානය -->
+    <p>පහත සඳහන් ආයෝජන මුදල්වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවා ගත යුතු මුදල අඩුකිරීමෙන් පසු <span id="listCheckNo" style="font-weight: bold; text-decoration: underline;">........................</span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+    
     <table>
         <thead>
             <tr>
@@ -208,8 +208,8 @@
 </div>
 
 <script>
-    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqrY6l9vGD5MOcTiD5z_D_IOoXbsdje0vhXYdEQI9VYvUWPL7duQbtot0dtoBAnoIOQQ/exec";
+    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. අලුතින් Deploy කළේ නම් අලුත් එක මෙතනට දමන්න.
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEhgdqm6CvRI3W9Glc8h59CvHG3NiYYKnpPuICP-I3QuQ47WknyKYqhs-8oCw_ZanR4A/exec";
 
     function getLocalDateFormat(dateObj) {
         if (!dateObj || isNaN(dateObj)) return "";
@@ -344,9 +344,15 @@
             if (data.length === 0) {
                 alert("Print Sheet හි දත්ත නොමැත!");
             } else {
+                // ගිණුමේ නම ඇතුළත් කිරීම (13 වන තීරුව)
                 let branchName = data[0][12]; 
                 if (!branchName) branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
                 document.getElementById('listAccountDisplay').innerText = branchName;
+
+                // චෙක්පත් අංකය ඇතුළත් කිරීම (14 වන තීරුව)
+                let checkNo = data[0][13];
+                if (!checkNo) checkNo = document.getElementById('colJ').value || "........................";
+                document.getElementById('listCheckNo').innerText = checkNo;
 
                 data.forEach(row => {
                     let rTotalInt = parseFloat(row[3]) || 0;
