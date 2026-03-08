@@ -66,7 +66,7 @@
     <h3 style="color: purple;">LOGIN</h3>
     <input type="text" id="user" placeholder="UserName">
     <input type="password" id="pass" placeholder="Password">
-    <button style="background: #00bcd4; width: 100%;" onclick="doLogin()">Login</button>
+    <button id="login-btn" style="background: #00bcd4; width: 100%;" onclick="doLogin()">Login</button>
 </div>
 
 <div id="system-area" class="container">
@@ -205,33 +205,44 @@
 </div>
 
 <script>
-    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYR1DasXsgqj-S79Yxy9auopbCv6OJeqcGzzaOwnTsY-SLoDsBprl08HlmZcRu-N_iyw/exec";
+    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. අලුතින් Deploy කළේ නම් අලුත් එක මෙතනට දමන්න.
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqrY6l9vGD5MOcTiD5z_D_IOoXbsdje0vhXYdEQI9VYvUWPL7duQbtot0dtoBAnoIOQQ/exec";
 
     function doLogin() {
-        let u = document.getElementById('user').value;
-        let p = document.getElementById('pass').value;
-        
-        let params = new URLSearchParams();
-        params.append('action', 'login');
-        params.append('username', u);
-        params.append('password', p);
+        try {
+            let u = document.getElementById('user').value;
+            let p = document.getElementById('pass').value;
+            
+            // දත්ත Form Body එකක් ලෙස යැවීමට සකස් කිරීම
+            let params = new URLSearchParams();
+            params.append('action', 'login');
+            params.append('username', u);
+            params.append('password', p);
 
-        document.querySelector('#login-area button').innerText = "Logging in...";
+            let btn = document.getElementById('login-btn');
+            btn.innerText = "Logging in...";
 
-        fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'})
-        .then(r => r.text()).then(res => {
-            document.querySelector('#login-area button').innerText = "Login";
-            if(res.trim() === "success") {
-                document.getElementById('login-area').style.display='none';
-                document.getElementById('system-area').style.display='block';
-            } else { 
-                alert("Incorrect username or password!\nදෝෂ පණිවිඩය: " + res); 
-            }
-        }).catch(err => {
-            document.querySelector('#login-area button').innerText = "Login";
-            alert("අන්තර්ජාල හෝ සර්වර් දෝෂයකි: " + err.message);
-        });
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: params
+            })
+            .then(r => r.text())
+            .then(res => {
+                btn.innerText = "Login";
+                if(res.trim() === "success") {
+                    document.getElementById('login-area').style.display='none';
+                    document.getElementById('system-area').style.display='block';
+                } else { 
+                    alert("Incorrect username or password!\nදෝෂ පණිවිඩය: " + res); 
+                }
+            })
+            .catch(err => {
+                btn.innerText = "Login";
+                alert("අන්තර්ජාල හෝ සර්වර් දෝෂයකි: " + err.message);
+            });
+        } catch (e) {
+            alert("JS දෝෂයකි: " + e.message);
+        }
     }
 
     function addPercentSymbol(input) {
@@ -315,7 +326,10 @@
             let params = new URLSearchParams();
             params.append('action', 'getPrintData');
 
-            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+            let response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: params
+            });
             let data = await response.json();
             
             let tbody = document.getElementById('printListBody');
@@ -326,9 +340,7 @@
                 alert("Print Sheet හි දත්ත නොමැත!");
             } else {
                 let branchName = data[0][12]; 
-                if (!branchName) {
-                    branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
-                }
+                if (!branchName) branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
                 document.getElementById('listAccountDisplay').innerText = branchName;
 
                 data.forEach(row => {
@@ -380,7 +392,10 @@
             let params = new URLSearchParams();
             params.append('action', 'clearPrintData');
 
-            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+            let response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: params
+            });
             let text = await response.text();
             
             if (text.includes("success")) {
@@ -393,17 +408,24 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
+        
         if(actionName === 'searchData') {
             let sId = document.getElementById('searchId').value;
             if(!sId) { alert("Please enter the receipt number to search!"); return; }
             params.append('colD', sId);
         } else {
-            fields.forEach(f => params.append(f, document.getElementById(f).value));
+            fields.forEach(f => {
+                let el = document.getElementById(f);
+                params.append(f, el ? el.value : "");
+            });
         }
         params.append('action', actionName);
 
         try {
-            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+            let response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: params
+            });
             let text = await response.text();
             try {
                 let data = JSON.parse(text);
@@ -421,5 +443,12 @@
                 if(text.toLowerCase().includes("success")) {
                     alert("Operation Successful!");
                     if(actionName !== 'searchData' && actionName !== 'addData') {
-                         fie
-
+                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
+                    }
+                } else { alert("Response: " + text); }
+            }
+        } catch(err) { alert("Error!: " + err.message); }
+    }
+</script>
+</body>
+</html>
