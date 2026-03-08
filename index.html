@@ -18,15 +18,19 @@
         .delete { background: #e74c3c; }
         .print-btn { background: #9b59b6; grid-column: span 2; margin-top: 10px; }
         
+        /* අලුත් Button 2 */
+        .print-list-btn { background: #3498db; }
+        .clear-list-btn { background: #d35400; }
+
         #login-area { text-align: center; } #system-area { display: none; }
         hr { margin: 20px 0; border: 0; border-top: 1px solid #eee; }
 
-        /* Report Styles */
+        /* Report Styles (Single Receipt) */
         #report-area { display: none; background: white; width: 210mm; min-height: 297mm; margin: auto; padding: 15mm; box-sizing: border-box; }
         .bold { font-weight: bold; }
-        .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
-        .header-left { flex-basis: 50%; margin-top: 3.5em; text-align: left; }
-        .header-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
+        .header-container-single { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
+        .header-left-single { flex-basis: 50%; margin-top: 3.5em; text-align: left; }
+        .header-right-single { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
         .report-title { font-size: 14pt; font-weight: bold; text-align: center; text-decoration: underline; margin: 15px 0; }
         .data-table, .investment-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
         .data-table td, .investment-table td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
@@ -34,11 +38,26 @@
         .sig-box-left { flex-basis: 50%; text-align: left; }
         .sig-box-right { flex-basis: 50%; display: flex; flex-direction: column; align-items: flex-end; text-align: left; }
 
+        /* New Print List Report Styles */
+        #print-list-area { display: none; background: white; width: 100%; padding: 20px; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #333; }
+        #print-list-area table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        #print-list-area th, #print-list-area td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 11px; }
+        #print-list-area th { background-color: #f2f2f2; }
+        #print-list-area .total-row { font-weight: bold; background-color: #fafafa; }
+        #print-list-area .header-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+        #print-list-area .header-left { text-align: left; }
+        #print-list-area .header-right { text-align: left; min-width: 150px; }
+        #print-list-area .title { text-align: center; font-weight: bold; text-decoration: underline; font-size: 16px; margin: 20px 0; display: block; }
+        #print-list-area .footer-section { display: flex; justify-content: space-between; margin-top: 50px; }
+        #print-list-area .signature-box { width: 45%; }
+        #print-list-area .dotted-line { border-bottom: 1px dotted #000; display: inline-block; width: 180px; margin-top: 10px; }
+
         @media print {
-            @page { size: A4; margin: 0; }
-            body { background: none; }
+            body { background: none; margin: 0; padding: 0; }
             .header, .container { display: none !important; }
-            #report-area { display: block !important; width: 100%; padding: 15mm; position: static; visibility: visible; }
+            /* Control visibility based on which print button was clicked */
+            body.printing-single #report-area { display: block !important; }
+            body.printing-list #print-list-area { display: block !important; }
         }
     </style>
 </head>
@@ -61,9 +80,8 @@
         <input type="text" id="searchId" placeholder="Enter receipt number to search data">
         <button class="search-btn" onclick="process('searchData')">🔍 Data Search</button>
     </div>
-
     <hr>
-
+    <!-- පෝරමයේ ආදානයන් (Inputs) -->
     <label>ආයෝජන මුදල අයත් බැංකුව / ගිණුමේ නම:</label>
     <select id="colA" required>
         <option value="" disabled selected hidden>Select Investment Account...</option>
@@ -73,7 +91,6 @@
         <option value="ණය සංරක්ෂණ අරමුදල්">ණය සංරක්ෂණ අරමුදල්</option>
         <option value="සමූහ සංරක්ෂණ අරමුදල්">සමූහ සංරක්ෂණ අරමුදල්</option>
     </select>
-
     <label>ආයෝජනය කළ බැංකුවේ නම:</label>
     <select id="colB" required>
         <option value="" disabled selected hidden>Select Bank...</option>
@@ -84,19 +101,10 @@
         <option value="රාජ්‍ය උකස් හා ආයෝජන බැංකුව">රාජ්‍ය උකස් හා ආයෝජන බැංකුව</option>
         <option value="ජාතික ඉතිරිකිරීමේ බැංකුව">ජාතික ඉතිරිකිරීමේ බැංකුව</option>
     </select>
-
-    <label>ආයෝජන කළ දිනය:</label>
-    <input type="date" id="colC" onchange="calculateDuration()">
-
-    <label>ආයෝජන රිසිට්පත් අංකය:</label>
-    <input type="text" id="colD">
-
-    <label>ආයෝජන මුදල (රු):</label>
-    <input type="number" id="colE">   
-
-    <label>ආයෝජනය කල්පිරෙන දිනය:</label>
-    <input type="date" id="colG" onchange="calculateDuration()">
-    
+    <label>ආයෝජන කළ දිනය:</label> <input type="date" id="colC" onchange="calculateDuration()">
+    <label>ආයෝජන රිසිට්පත් අංකය:</label> <input type="text" id="colD">
+    <label>ආයෝජන මුදල (රු):</label> <input type="number" id="colE">   
+    <label>ආයෝජනය කල්පිරෙන දිනය:</label> <input type="date" id="colG" onchange="calculateDuration()">
     <label>ආයෝජන කාලය: </label>
     <select id="colF">  
         <option value="" selected>Investment period is automatically selected</option>
@@ -104,47 +112,44 @@
         <option value="මාස 03">මාස 03කි </option>
         <option value="මාස 06">මාස 06කි </option>
     </select>
-    
-    <label>ආයෝජන පොලි ප්‍රතිශතය:</label>
-    <input type="text" id="colH" placeholder="Ex: 7" onblur="addPercentSymbol(this)">
-    
-    <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label>
-    <input type="text" id="colI">
-
-    <label>චෙක්පත් අංකය:</label>
-    <input type="text" id="colJ">
+    <label>ආයෝජන පොලි ප්‍රතිශතය:</label> <input type="text" id="colH" placeholder="Ex: 7" onblur="addPercentSymbol(this)">
+    <label>ආයෝජනය සඳහා ලද පොලිය (රු):</label> <input type="text" id="colI">
+    <label>චෙක්පත් අංකය:</label> <input type="text" id="colJ">
 
     <div class="btn-grid">
         <button class="add" onclick="process('addData')">Data Add</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Print & Save</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print Single Receipt</button>
+    </div>
+
+    <hr>
+    <h4 style="text-align: center; color: #555; margin-bottom: 5px;">Print Sheet Reports</h4>
+    <div class="btn-grid" style="margin-top: 5px;">
+        <button class="print-list-btn" onclick="generatePrintList()">📋 Print List (Landscape)</button>
+        <button class="clear-list-btn" onclick="clearPrintSheet()">🗑️ All Delete (Print Data)</button>
     </div>
 </div>
 
+<!-- 1. Single Receipt Report -->
 <div id="report-area">
-    <div class="header-container">
-        <div class="header-left">
+    <div class="header-container-single">
+        <div class="header-left-single">
             <p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p>
         </div>
-        <div class="header-right">
+        <div class="header-right-single">
             <div style="text-align: right; width: 100%; margin-bottom: 20px;"><h5 style="font-size: 14px; font-weight: bold; margin: 0;">ඇමුණුම 4</h5></div>
             <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය<br>පදියතලාව<br>දිනය: <span id="rDate"></span></p>
         </div>
     </div>
-
     <div class="report-title">කරන ලද ආයෝජන රු. <span id="rMainAmount"></span> පොලිය හා මුදල එවිමේ නිවේදනය</div>
     <p class="bold"><span id="rBankDisplay"></span> - <span id="rReceiptDisplay"></span></p>
-
     <p>ඉහත සඳහන් ආයෝජනයට අදාලව ලද පොලිය සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය විසින් රඳවාගත යුතු මුදල අඩු කිරීමෙන් පසු <span id="rCheckNo" class="bold"></span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
-    
     <table class="data-table">
         <tr><td style="width: 65%;">1. අදාල ආයෝජනයට ලද මුළු පොලිය (රු)</td><td style="width: 35%; text-align: right; font-weight: bold;" id="rTotalInt"></td></tr>
         <tr><td>2. අඩු කලා සමෘද්ධි බැංකු සමිතිය රඳවාගත් පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rDeductedInt"></td></tr>
         <tr><td>3. සමෘද්ධි බැංකුවට එවන පොලි මුදල (රු)</td><td style="text-align: right; font-weight: bold;" id="rSentInt"></td></tr>
     </table>
-
     <p>තවද ඔබගේ ඉල්ලීම පරිදි ආයෝජනය කල මුදල චෙක්පත් අංක ................... මගින් එවමු / නැවත ආයෝජනය කල බව දන්වමු.</p>
-
     <table class="investment-table">
         <tr><td style="width: 65%;">ආයෝජනය කල මුදල (රු):</td><td style="width: 35%; text-align: right; font-weight: bold;" id="rAmtBottom"></td></tr>
         <tr><td>ආයෝජනය වර්ගය:</td><td style="text-align: right; font-weight: bold;">ස්ථීර තැන්පතු</td></tr>
@@ -152,29 +157,63 @@
         <tr><td>ආයෝජනය කල පොලි ප්‍රතිශතය:</td><td style="text-align: right; font-weight: bold;" id="rRateBottom"></td></tr>
         <tr><td>ආයෝජනය කල්පිරෙන දිනය:</td><td style="text-align: right; font-weight: bold;" id="rMaturityDate"></td></tr>
     </table>
-
     <div class="signature-section">
-        <div class="sig-box-left">
-            <p class="bold">ගිණුම් ලිපිකරු</p>
-            <p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p>
-            <p>නම: .......................................</p>
-            <p>අත්සන: .................................</p>
-            <p>දිනය: .................................</p>
-        </div>
-        <div class="sig-box-right">
-            <div style="width: fit-content;">
-                <p class="bold">බලයලත් නිලදරු/කළමනාකරු</p>
-                <p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p>
-                <p>නම: .......................................</p>
-                <p>අත්සන: .................................</p>
-                <p>දිනය: .................................</p>
-            </div>
-        </div>
+        <div class="sig-box-left"><p class="bold">ගිණුම් ලිපිකරු</p><p>සමෘද්ධි ප්‍රජාමුල බැංකු සමිතිය</p><p>නම: .......................................</p><p>අත්සන: .................................</p><p>දිනය: .................................</p></div>
+        <div class="sig-box-right"><div style="width: fit-content;"><p class="bold">බලයලත් නිලදරු/කළමනාකරු</p><p>සමෘද්ධි ප්‍රජාමූල බැංකු සමිතිය</p><p>නම: .......................................</p><p>අත්සන: .................................</p><p>දිනය: .................................</p></div></div>
+    </div>
+</div>
+
+<!-- 2. New Print List Report (Landscape) -->
+<div id="print-list-area">
+    <div class="header-container">
+        <div class="header-left">කළමනාකරු,<br>සමෘද්ධි බැංකු සංගමය,<br>පදියතලාව</div>
+        <div class="header-right">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="currentDateList"></span></div>
+    </div>
+    <div class="title">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</div>
+    <p>පහත සඳහන් ආයෝජන මුදල්වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවා ගත යුතු මුදල අඩුකිරීමෙන් පසු ........................ දරණ චෙක්පත මගින් අමුණා එවමු.</p>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="6">කල්පිරුණු ආයෝජන පිළිබඳ විස්තර</th>
+                <th colspan="6">නැවත ආයෝජන පිළිබඳ විස්තර</th>
+            </tr>
+            <tr>
+                <th>ආයෝජන මුදල (රු)</th>
+                <th>ආයෝජන කළ බැංකුව</th>
+                <th>ආයෝජන රිසිට්පත් අංකය</th>
+                <th>අදාල ආයෝජනයට ලද මුළු පොලිය</th>
+                <th>අඩුකල මහා සංගමය රඳවාගත් පොලී මුදල</th>
+                <th>සමෘද්ධි බැංකු සංගමයට එවන පොලී මුදල</th>
+                <th>නැවත ආයෝජනය කල දිනය</th>
+                <th>නැවත ආයෝජනය කල මුදල</th>
+                <th>ආයෝජන වර්ගය</th>
+                <th>ආයෝජනය කල කාලය</th>
+                <th>ආයෝජන කල පොලී ප්‍රතිශතය</th>
+                <th>ආයෝජනය කල්පිරෙන දිනය</th>
+            </tr>
+        </thead>
+        <tbody id="printListBody">
+            <!-- Data will be injected here automatically -->
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3">එකතුව</td>
+                <td id="totInt">0.00</td>
+                <td id="totDed">0.00</td>
+                <td id="totSent">0.00</td>
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="footer-section">
+        <div class="signature-box">ගිණුම් ලිපිකරු<br>සමෘද්ධි මහ සංගමය/මූලස්ථාන කළමනාකරු<br>නම:- <span class="dotted-line"></span><br>අත්සන:- <span class="dotted-line"></span><br>දිනය:- <span class="dotted-line"></span></div>
+        <div class="signature-box">බලයලත් නිලධාරි සමෘද්ධි බැංකු<br>මහ සංගමය/ප්‍රාදේශීය ලේකම්<br>නම:- <span class="dotted-line"></span><br>අත්සන:- <span class="dotted-line"></span><br>දිනය:- <span class="dotted-line"></span></div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxqxR93Pfh6vIYUYqK_S0jqoGxJVz2wkInm5iezIehiLbgVp7ch-JUIm8y9xWlf0WoBQ/exec";
+    // ඔබගේ Script URL එක මෙහි ඇතුලත් කරන්න
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9hZN6DG61wO4qvxThSvzCIc5kEIqZeLNIkBzqWroHOLHYGJZFlhSWhS1F371N7kEQ2g/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -190,9 +229,7 @@
 
     function addPercentSymbol(input) {
         let val = input.value.trim();
-        if (val !== "" && !isNaN(val.replace('%',''))) {
-            input.value = val.replace('%','') + "%";
-        }
+        if (val !== "" && !isNaN(val.replace('%',''))) { input.value = val.replace('%','') + "%"; }
     }
 
     function calculateDuration() {
@@ -207,73 +244,13 @@
         }
     }
 
-    async function generateReport() {
-        await process('addData');
-
-        document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
-        // ලිපිනයට අදාළ නම colA වෙතින් ලබා ගැනීම
-        document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
-
-        const amt = parseFloat(document.getElementById('colE').value) || 0;
-        const totalInt = parseFloat(document.getElementById('colI').value) || 0;
-        const deducted = totalInt * 0.07;
-
-        document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
-        document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
-        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
-        document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
-        
-        let rate = document.getElementById('colH').value;
-        document.getElementById('rRateBottom').innerText = rate.includes('%') ? rate : rate + "%";
-        document.getElementById('rMaturityDate').innerText = document.getElementById('colG').value;
-
-        window.print();
-    }
-
-    async function process(actionName) {
-        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
-        let params = new URLSearchParams();
-        if(actionName === 'searchData') {
-            let sId = document.getElementById('searchId').value;
-            if(!sId) { alert("Please enter the receipt number to search!"); return; }
-            params.append('colD', sId);
-        } else {
-            fields.forEach(f => params.append(f, document.getElementById(f).value));
+    // Set Page Style dynamically (Landscape or Portrait)
+    function setPrintStyle(orientation) {
+        let style = document.getElementById('dynamicPrintStyle');
+        if (!style) {
+            style = document.createElement('style');
+            style.id = 'dynamicPrintStyle';
+            document.head.appendChild(style);
         }
-        params.append('action', actionName);
-
-        try {
-            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
-            let text = await response.text();
-            try {
-                let data = JSON.parse(text);
-                if(actionName === 'searchData') {
-                    fields.forEach((f, i) => {
-                        let element = document.getElementById(f);
-                        if((i === 2 || i === 6) && data[i]) { 
-                            let dateVal = new Date(data[i]);
-                            if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
-                        } else {
-                            element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
-                        }
-                    });
-                    alert("Data found!");
-                }
-            } catch(e) {
-                if(text.toLowerCase().includes("success")) {
-                    alert("Operation Successful!");
-                    if(actionName !== 'searchData' && actionName !== 'addData') {
-                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
-                    }
-                } else { alert("Response: " + text); }
-            }
-        } catch(err) { alert("Error!: " + err.message); }
-    }
-</script>
-</body>
-</html>
+        if (orientation === 'landscape') {
+            style.innerHTML = '@media print { @page { s
