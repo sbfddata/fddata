@@ -213,7 +213,7 @@
 
 <script>
     // ඔබගේ Script URL එක මෙහි ඇතුලත් කරන්න
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9hZN6DG61wO4qvxThSvzCIc5kEIqZeLNIkBzqWroHOLHYGJZFlhSWhS1F371N7kEQ2g/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww_qlC3pCEWGF3-cK5iVtVSGxwdAh9iu6vBnS2zJAMvy-mNlUxcj1XERJO7v8TthqoXA/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
@@ -253,4 +253,180 @@
             document.head.appendChild(style);
         }
         if (orientation === 'landscape') {
-            style.innerHTML = '@media print { @page { s
+            style.innerHTML = '@media print { @page { size: A4 landscape; margin: 10mm; } }';
+            document.body.className = 'printing-list';
+        } else {
+            style.innerHTML = '@media print { @page { size: A4 portrait; margin: 0; } }';
+            document.body.className = 'printing-single';
+        }
+    }
+
+    // 1. Single Receipt Print
+    async function generateReport() {
+        await process('addData');
+        setPrintStyle('portrait');
+
+        document.getElementById('rDate').innerText = new Date().toISOString().split('T')[0];
+        document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
+
+        const amt = parseFloat(document.getElementById('colE').value) || 0;
+        const totalInt = parseFloat(document.getElementById('colI').value) || 0;
+        const deducted = totalInt * 0.07;
+
+        document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
+        document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
+        document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
+        document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
+        let rate = document.getElementById('colH').value;
+        document.getElementById('rRateBottom').innerText = rate.includes('%') ? rate : rate + "%";
+        document.getElementById('rMaturityDate').innerText = document.getElementById('colG').value;
+
+        window.print();
+        document.body.className = ''; // Reset class after printing
+    }
+
+    // Date formatting helper
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        let d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return d.toISOString().split('T')[0];
+    }
+
+    // Number formatting helper
+    function formatCurrency(num) {
+        let n = parseFloat(num) || 0;
+        return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    // 2. Fetch and Print List (Landscape)
+    async function generatePrintList() {
+        try {
+            document.querySelector('.print-list-btn').innerText = "Loading Data...";
+            
+            // Set Today's Date
+            document.getElementById('currentDateList').innerText = new Date().toISOString().split('T')[0];
+
+            let response = await fetch(`${SCRIPT_URL}?action=getPrintData`, {method: 'POST'});
+            let data = await response.json();
+            
+            let tbody = document.getElementById('printListBody');
+            tbody.innerHTML = "";
+            let sumInt = 0, sumDed = 0, sumSent = 0;
+
+            if (data.length === 0) {
+                alert("Print Sheet හි දත්ත නොමැත!");
+            } else {
+                data.forEach(row => {
+                    let rTotalInt = parseFloat(row[3]) || 0;
+                    let rDedInt = parseFloat(row[4]) || 0;
+                    let rSentInt = parseFloat(row[5]) || 0;
+
+                    sumInt += rTotalInt;
+                    sumDed += rDedInt;
+                    sumSent += rSentInt;
+
+                    let tr = `<tr>
+                        <td>${formatCurrency(row[0])}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                        <td>${formatCurrency(rTotalInt)}</td>
+                        <td>${formatCurrency(rDedInt)}</td>
+                        <td>${formatCurrency(rSentInt)}</td>
+                        <td>${formatDate(row[6])}</td>
+                        <td>${formatCurrency(row[7])}</td>
+                        <td>${row[8]}</td>
+                        <td>${row[9]}</td>
+                        <td>${row[10]}</td>
+                        <td>${formatDate(row[11])}</td>
+                    </tr>`;
+                    tbody.innerHTML += tr;
+                });
+            }
+
+            // Update Totals
+            document.getElementById('totInt').innerText = formatCurrency(sumInt);
+            document.getElementById('totDed').innerText = formatCurrency(sumDed);
+            document.getElementById('totSent').innerText = formatCurrency(sumSent);
+
+            document.querySelector('.print-list-btn').innerText = "📋 Print List (Landscape)";
+
+            // Trigger Print
+            setPrintStyle('landscape');
+            window.print();
+            document.body.className = ''; // Reset class
+
+        } catch (err) {
+            alert("Error Loading Print Data: " + err.message);
+            document.querySelector('.print-list-btn').innerText = "📋 Print List (Landscape)";
+        }
+    }
+
+    // 3. Clear Print Sheet Data
+    async function clearPrintSheet() {
+        if (!confirm("මෙමගින් 'Print' Sheet එකේ ඇති සියලුම දත්ත මකා දැමේ. (FD Data සුරක්ෂිත වේ). ඔබට තහවුරුද?")) return;
+        
+        try {
+            document.querySelector('.clear-list-btn').innerText = "Clearing...";
+            let response = await fetch(`${SCRIPT_URL}?action=clearPrintData`, {method: 'POST'});
+            let text = await response.text();
+            
+            if (text.includes("success")) {
+                alert("Print Sheet හි දත්ත සාර්ථකව මකා දමන ලදි!");
+            } else {
+                alert("දෝෂයක්: " + text);
+            }
+        } catch (err) {
+            alert("Error!: " + err.message);
+        } finally {
+            document.querySelector('.clear-list-btn').innerText = "🗑️ All Delete (Print Data)";
+        }
+    }
+
+    async function process(actionName) {
+        let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
+        let params = new URLSearchParams();
+        if(actionName === 'searchData') {
+            let sId = document.getElementById('searchId').value;
+            if(!sId) { alert("Please enter the receipt number to search!"); return; }
+            params.append('colD', sId);
+        } else {
+            fields.forEach(f => params.append(f, document.getElementById(f).value));
+        }
+        params.append('action', actionName);
+
+        try {
+            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
+            let text = await response.text();
+            try {
+                let data = JSON.parse(text);
+                if(actionName === 'searchData') {
+                    fields.forEach((f, i) => {
+                        let element = document.getElementById(f);
+                        if((i === 2 || i === 6) && data[i]) { 
+                            let dateVal = new Date(data[i]);
+                            if (!isNaN(dateVal)) element.value = dateVal.toISOString().split('T')[0];
+                        } else {
+                            element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : "";
+                        }
+                    });
+                    alert("Data found!");
+                }
+            } catch(e) {
+                if(text.toLowerCase().includes("success")) {
+                    alert("Operation Successful!");
+                    if(actionName !== 'searchData' && actionName !== 'addData') {
+                         fields.forEach(f => { if(f !== 'colA') document.getElementById(f).value = ""; });
+                    }
+                } else { alert("Response: " + text); }
+            }
+        } catch(err) { alert("Error!: " + err.message); }
+    }
+</script>
+</body>
+</html>
