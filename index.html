@@ -158,7 +158,6 @@
 
 <div id="print-list-area">
     <div class="header-container">
-        <!-- මෙතන තමයි ඔබගේ අලුත් වෙනස සිදු කර ඇත්තේ -->
         <div class="header-left">
             කළමනාකරු,<br>
             <span id="listAccountDisplay"></span>
@@ -206,17 +205,32 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwD1IDQ2FxJZmWjWp2zXr91MOyotgZou_60uSIf_f2XR5PuKyWcW05ieNN2LM-U1uYfGg/exec";
+    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzeNZCelTP45DK2KFXQ2T-DUEIU9argqL7PtSTzMO0zBOTKoVpK5_lTQ6yGXJ3cqbssYQ/exec";
 
     function doLogin() {
         let u = document.getElementById('user').value;
         let p = document.getElementById('pass').value;
-        fetch(`${SCRIPT_URL}?action=login&username=${u}&password=${p}`, {method: 'POST'})
+        
+        let params = new URLSearchParams();
+        params.append('action', 'login');
+        params.append('username', u);
+        params.append('password', p);
+
+        document.querySelector('#login-area button').innerText = "Logging in...";
+
+        fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'})
         .then(r => r.text()).then(res => {
+            document.querySelector('#login-area button').innerText = "Login";
             if(res.trim() === "success") {
                 document.getElementById('login-area').style.display='none';
                 document.getElementById('system-area').style.display='block';
-            } else { alert("Incorrect username or password!"); }
+            } else { 
+                alert("Incorrect username or password!\nදෝෂ පණිවිඩය: " + res); 
+            }
+        }).catch(err => {
+            document.querySelector('#login-area button').innerText = "Login";
+            alert("අන්තර්ජාල හෝ සර්වර් දෝෂයකි: " + err.message);
         });
     }
 
@@ -298,7 +312,10 @@
             document.querySelector('.print-list-btn').innerText = "Loading Data...";
             document.getElementById('currentDateList').innerText = new Date().toISOString().split('T')[0];
 
-            let response = await fetch(`${SCRIPT_URL}?action=getPrintData`, {method: 'POST'});
+            let params = new URLSearchParams();
+            params.append('action', 'getPrintData');
+
+            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
             let data = await response.json();
             
             let tbody = document.getElementById('printListBody');
@@ -308,7 +325,6 @@
             if (data.length === 0) {
                 alert("Print Sheet හි දත්ත නොමැත!");
             } else {
-                // දත්ත ගොනුවේ ඇති පළමු පේළියේ 13වන තීරුවෙන් බැංකුවේ නම ගනී. එසේ නොමැතිනම් Dropdown එකේ ඇති නම ගනී.
                 let branchName = data[0][12]; 
                 if (!branchName) {
                     branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
@@ -361,7 +377,10 @@
         if (!confirm("මෙමගින් 'Print' Sheet එකේ ඇති සියලුම දත්ත මකා දැමේ. ඔබට තහවුරුද?")) return;
         try {
             document.querySelector('.clear-list-btn').innerText = "Clearing...";
-            let response = await fetch(`${SCRIPT_URL}?action=clearPrintData`, {method: 'POST'});
+            let params = new URLSearchParams();
+            params.append('action', 'clearPrintData');
+
+            let response = await fetch(`${SCRIPT_URL}?${params.toString()}`, {method: 'POST'});
             let text = await response.text();
             
             if (text.includes("success")) {
@@ -397,3 +416,9 @@
                         } else { element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : ""; }
                     });
                     alert("Data found!");
+                }
+            } catch(e) {
+                if(text.toLowerCase().includes("success")) {
+                    alert("Operation Successful!");
+                    if(actionName !== 'searchData' && actionName !== 'addData') {
+                         fie
