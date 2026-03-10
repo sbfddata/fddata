@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INSP</title>
+    <title>Investment System Pro - Padiyathalawa</title>
     <style>
         body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background: #90caf9; padding: 20px; text-align: center; font-size: 18pt; font-weight: bold; }
@@ -113,9 +113,9 @@
     <label>චෙක්පත් අංකය:</label> <input type="text" id="colJ">
 
     <div class="btn-grid">
-        <button class="add" onclick="process('addData')">Save New FD Only</button>
+        <button class="add" onclick="process('addData')">Data Add</button>
         <button class="delete" onclick="process('deleteData')">Data Delete</button>
-        <button class="print-btn" onclick="generateReport()">🖨️ Save & Print Single Receipt</button>
+        <button class="print-btn" onclick="generateReport()">🖨️ Print Single Receipt</button>
     </div>
 
     <hr>
@@ -126,6 +126,7 @@
     </div>
 </div>
 
+<!-- Single Receipt Report Section -->
 <div id="report-area">
     <div class="header-container-single">
         <div class="header-left-single"><p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p></div>
@@ -156,6 +157,7 @@
     </div>
 </div>
 
+<!-- Print List Report Section -->
 <div id="print-list-area">
     <div class="header-container">
         <div class="header-left">
@@ -165,10 +167,7 @@
         <div class="header-right">සමෘද්ධි මහ සංගමය<br>පදියතලාව<br>දිනය:- <span id="currentDateList"></span></div>
     </div>
     <div class="title">කරන ලද ආයෝජන පොලිය හා මුදල එවීම් නිවේදනය</div>
-    
-    <!-- චෙක්පත් අංකය ඇතුළත් කිරීම සඳහා ස්ථානය -->
     <p>පහත සඳහන් ආයෝජන මුදල්වලට අදාලව, ලද පොලිය සමෘද්ධි මහ සංගමය විසින් රඳවා ගත යුතු මුදල අඩුකිරීමෙන් පසු <span id="listCheckNo" style="font-weight: bold; text-decoration: underline;">........................</span> දරණ චෙක්පත මගින් අමුණා එවමු.</p>
-    
     <table>
         <thead>
             <tr>
@@ -208,7 +207,7 @@
 </div>
 
 <script>
-    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. අලුතින් Deploy කළේ නම් අලුත් එක මෙතනට දමන්න.
+    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEhgdqm6CvRI3W9Glc8h59CvHG3NiYYKnpPuICP-I3QuQ47WknyKYqhs-8oCw_ZanR4A/exec";
 
     function getLocalDateFormat(dateObj) {
@@ -224,6 +223,12 @@
         let d = new Date(dateStr);
         if (isNaN(d)) return dateStr;
         return getLocalDateFormat(d);
+    }
+
+    // දශමස්ථාන දෙකකට අනිවාර්යයෙන්ම මුදල් සකස් කරන Function එක
+    function formatCurrency(num) {
+        let n = parseFloat(num) || 0;
+        return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     function doLogin() {
@@ -303,14 +308,18 @@
         const totalInt = parseFloat(document.getElementById('colI').value) || 0;
         const deducted = totalInt * 0.07;
 
-        document.getElementById('rMainAmount').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rAmtBottom').innerText = amt.toLocaleString('en-US', {minimumFractionDigits: 2});
+        // මුදල් අගයන්ට formatCurrency() යෙදීම (දශමස්ථාන දෙකකට සැකසීම)
+        document.getElementById('rMainAmount').innerText = formatCurrency(amt);
+        document.getElementById('rAmtBottom').innerText = formatCurrency(amt);
         document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
         document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
         document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
-        document.getElementById('rTotalInt').innerText = totalInt.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rDeductedInt').innerText = deducted.toLocaleString('en-US', {minimumFractionDigits: 2});
-        document.getElementById('rSentInt').innerText = (totalInt - deducted).toLocaleString('en-US', {minimumFractionDigits: 2});
+        
+        // පහත පේළි 3 දශමස්ථාන 2කට පෙන්වීමට සකස් කර ඇත
+        document.getElementById('rTotalInt').innerText = formatCurrency(totalInt);
+        document.getElementById('rDeductedInt').innerText = formatCurrency(deducted);
+        document.getElementById('rSentInt').innerText = formatCurrency(totalInt - deducted);
+        
         document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
         let rate = document.getElementById('colH').value;
         document.getElementById('rRateBottom').innerText = rate.includes('%') ? rate : rate + "%";
@@ -318,11 +327,6 @@
 
         window.print();
         document.body.className = '';
-    }
-
-    function formatCurrency(num) {
-        let n = parseFloat(num) || 0;
-        return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     async function generatePrintList() {
@@ -344,12 +348,10 @@
             if (data.length === 0) {
                 alert("Print Sheet හි දත්ත නොමැත!");
             } else {
-                // ගිණුමේ නම ඇතුළත් කිරීම (13 වන තීරුව)
                 let branchName = data[0][12]; 
                 if (!branchName) branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
                 document.getElementById('listAccountDisplay').innerText = branchName;
 
-                // චෙක්පත් අංකය ඇතුළත් කිරීම (14 වන තීරුව)
                 let checkNo = data[0][13];
                 if (!checkNo) checkNo = document.getElementById('colJ').value || "........................";
                 document.getElementById('listCheckNo').innerText = checkNo;
@@ -457,4 +459,3 @@
 </script>
 </body>
 </html>
-
