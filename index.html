@@ -99,7 +99,7 @@
     </select>
     <label>ආයෝජන කළ දිනය:</label> <input type="date" id="colC" onchange="calculateDuration()">
     <label>ආයෝජන රිසිට්පත් අංකය:</label> <input type="text" id="colD">
-    <label>ආයෝජන මුදල (රු):</label> <input type="number" id="colE">   
+    <label>ආයෝජන මුදල (රු):</label> <input type="text" id="colE">   
     <label>ආයෝජනය කල්පිරෙන දිනය:</label> <input type="date" id="colG" onchange="calculateDuration()">
     <label>ආයෝජන කාලය: </label>
     <select id="colF">  
@@ -126,7 +126,6 @@
     </div>
 </div>
 
-<!-- Single Receipt Report Section -->
 <div id="report-area">
     <div class="header-container-single">
         <div class="header-left-single"><p>කළමනාකරු,<br><span id="rAccountDisplay"></span>.</p></div>
@@ -157,7 +156,6 @@
     </div>
 </div>
 
-<!-- Print List Report Section -->
 <div id="print-list-area">
     <div class="header-container">
         <div class="header-left">
@@ -207,8 +205,7 @@
 </div>
 
 <script>
-    // ඔබගේ SCRIPT_URL එක පහතින් ඇතුලත් කරන්න. 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEhgdqm6CvRI3W9Glc8h59CvHG3NiYYKnpPuICP-I3QuQ47WknyKYqhs-8oCw_ZanR4A/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuPRH7j2XQkwcZh-fIqnZcZECvfzi5tYRmGfPqRSW9R5AYz8G6FjEqylO4gtxyugUItw/exec";
 
     function getLocalDateFormat(dateObj) {
         if (!dateObj || isNaN(dateObj)) return "";
@@ -225,7 +222,6 @@
         return getLocalDateFormat(d);
     }
 
-    // දශමස්ථාන දෙකකට අනිවාර්යයෙන්ම මුදල් සකස් කරන Function එක
     function formatCurrency(num) {
         let n = parseFloat(num) || 0;
         return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -304,18 +300,21 @@
         document.getElementById('rDate').innerText = getLocalDateFormat(new Date());
         document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
 
-        const amt = parseFloat(document.getElementById('colE').value) || 0;
-        const totalInt = parseFloat(document.getElementById('colI').value) || 0;
+        // මෙහිදී කමා (,) ලකුණු ඉවත් කර මුදල් අගයන් ගණනය කෙරේ
+        const rawAmt = document.getElementById('colE').value.replace(/,/g, '');
+        const amt = parseFloat(rawAmt) || 0;
+        
+        const rawInt = document.getElementById('colI').value.replace(/,/g, '');
+        const totalInt = parseFloat(rawInt) || 0;
+        
         const deducted = totalInt * 0.07;
 
-        // මුදල් අගයන්ට formatCurrency() යෙදීම (දශමස්ථාන දෙකකට සැකසීම)
         document.getElementById('rMainAmount').innerText = formatCurrency(amt);
         document.getElementById('rAmtBottom').innerText = formatCurrency(amt);
         document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
         document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
         document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
         
-        // පහත පේළි 3 දශමස්ථාන 2කට පෙන්වීමට සකස් කර ඇත
         document.getElementById('rTotalInt').innerText = formatCurrency(totalInt);
         document.getElementById('rDeductedInt').innerText = formatCurrency(deducted);
         document.getElementById('rSentInt').innerText = formatCurrency(totalInt - deducted);
