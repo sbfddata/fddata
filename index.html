@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBPD</title>
+    <title>Investment System Pro - Padiyathalawa</title>
     <style>
         body { font-family: sans-serif; font-size: 12pt; line-height: 1.2; background-color: #f4f7f6; margin: 0; padding: 0; }
         .header { background: #90caf9; padding: 20px; text-align: center; font-size: 18pt; font-weight: bold; }
@@ -205,7 +205,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhr6wIwgNZVM2tdyO-NGppSMMYQVCWegPUJy52nHV9CyAiYdAYoUHdsHEpXWomhfvovA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOzu1pMPRGSpmq6qAH1HPTrVCsiejjit6jIyyOnHwdhj5kR_uOGyFxdGpQVx71WE6uDg/exec";
 
     function getLocalDateFormat(dateObj) {
         if (!dateObj || isNaN(dateObj)) return "";
@@ -222,6 +222,7 @@
         return getLocalDateFormat(d);
     }
 
+    // මුදල් ආකෘතිකරණය කිරීමේදී දශමස්ථාන 2ක් අනිවාර්ය කරයි
     function formatCurrency(num) {
         let n = parseFloat(num) || 0;
         return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -231,15 +232,12 @@
         try {
             let u = document.getElementById('user').value;
             let p = document.getElementById('pass').value;
-            
             let params = new URLSearchParams();
             params.append('action', 'login');
             params.append('username', u);
             params.append('password', p);
-
             let btn = document.getElementById('login-btn');
             btn.innerText = "Logging in...";
-
             fetch(SCRIPT_URL, { method: 'POST', body: params })
             .then(r => r.text())
             .then(res => {
@@ -247,17 +245,10 @@
                 if(res.trim() === "success") {
                     document.getElementById('login-area').style.display='none';
                     document.getElementById('system-area').style.display='block';
-                } else { 
-                    alert("Incorrect username or password!\nදෝෂ පණිවිඩය: " + res); 
-                }
+                } else { alert("Incorrect username or password!"); }
             })
-            .catch(err => {
-                btn.innerText = "Login";
-                alert("අන්තර්ජාල හෝ සර්වර් දෝෂයකි: " + err.message);
-            });
-        } catch (e) {
-            alert("JS දෝෂයකි: " + e.message);
-        }
+            .catch(err => { btn.innerText = "Login"; alert("Error: " + err.message); });
+        } catch (e) { alert("JS Error: " + e.message); }
     }
 
     function addPercentSymbol(input) {
@@ -296,62 +287,50 @@
     async function generateReport() {
         await process('addData');
         setPrintStyle('portrait');
-
         document.getElementById('rDate').innerText = getLocalDateFormat(new Date());
         document.getElementById('rAccountDisplay').innerText = document.getElementById('colA').value;
-
         const rawAmt = document.getElementById('colE').value.replace(/,/g, '');
         const amt = parseFloat(rawAmt) || 0;
-        
         const rawInt = document.getElementById('colI').value.replace(/,/g, '');
         const totalInt = parseFloat(rawInt) || 0;
-        
-        const deducted = totalInt * 0.07;
-
+        // 7% රඳවා ගැනීම
+        const deducted = Math.round(totalInt * 0.07 * 100) / 100;
         document.getElementById('rMainAmount').innerText = formatCurrency(amt);
         document.getElementById('rAmtBottom').innerText = formatCurrency(amt);
         document.getElementById('rBankDisplay').innerText = document.getElementById('colB').value;
         document.getElementById('rReceiptDisplay').innerText = document.getElementById('colD').value;
         document.getElementById('rCheckNo').innerText = document.getElementById('colJ').value;
-        
         document.getElementById('rTotalInt').innerText = formatCurrency(totalInt);
         document.getElementById('rDeductedInt').innerText = formatCurrency(deducted);
         document.getElementById('rSentInt').innerText = formatCurrency(totalInt - deducted);
-        
         document.getElementById('rPeriodText').innerText = document.getElementById('colF').value + " (" + document.getElementById('colC').value + " සිට " + document.getElementById('colG').value + " දක්වා)";
         let rate = document.getElementById('colH').value;
         document.getElementById('rRateBottom').innerText = rate.includes('%') ? rate : rate + "%";
         document.getElementById('rMaturityDate').innerText = document.getElementById('colG').value;
-
         window.print();
         document.body.className = '';
     }
 
+    // දත්ත එකතු කිරීමේදී සිදුවන ශත ප්‍රමාණයේ දෝෂ මඟහැරවූ ශ්‍රිතය
     async function generatePrintList() {
         try {
-            document.querySelector('.print-list-btn').innerText = "Loading Data...";
-            
+            document.querySelector('.print-list-btn').innerText = "Loading...";
             document.getElementById('currentDateList').innerText = getLocalDateFormat(new Date());
-
             let params = new URLSearchParams();
             params.append('action', 'getPrintData');
-
             let response = await fetch(SCRIPT_URL, { method: 'POST', body: params });
             let data = await response.json();
-            
             let tbody = document.getElementById('printListBody');
             tbody.innerHTML = "";
+
             let sumInt = 0, sumDed = 0, sumSent = 0;
 
             if (data.length === 0) {
                 alert("Print Sheet හි දත්ත නොමැත!");
             } else {
-                let branchName = data[0][12]; 
-                if (!branchName) branchName = document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
+                let branchName = data[0][12] || document.getElementById('colA').value || "සමෘද්ධි බැංකුව";
                 document.getElementById('listAccountDisplay').innerText = branchName;
-
-                let checkNo = data[0][13];
-                if (!checkNo) checkNo = document.getElementById('colJ').value || "........................";
+                let checkNo = data[0][13] || document.getElementById('colJ').value || "........................";
                 document.getElementById('listCheckNo').innerText = checkNo;
 
                 data.forEach(row => {
@@ -359,9 +338,10 @@
                     let rDedInt = parseFloat(row[4]) || 0;
                     let rSentInt = parseFloat(row[5]) || 0;
 
-                    sumInt += rTotalInt;
-                    sumDed += rDedInt;
-                    sumSent += rSentInt;
+                    // එකතු කිරීමේදී දශමස්ථාන දෝෂ මඟහරවා ගැනීම (Rounding to 2 decimals)
+                    sumInt = Math.round((sumInt + rTotalInt) * 100) / 100;
+                    sumDed = Math.round((sumDed + rDedInt) * 100) / 100;
+                    sumSent = Math.round((sumSent + rSentInt) * 100) / 100;
 
                     let tr = `<tr>
                         <td>${formatCurrency(row[0])}</td>
@@ -389,9 +369,8 @@
             setPrintStyle('landscape');
             window.print();
             document.body.className = '';
-
         } catch (err) {
-            alert("Error Loading Print Data: " + err.message);
+            alert("Error: " + err.message);
             document.querySelector('.print-list-btn').innerText = "📋 Print List (Landscape)";
         }
     }
@@ -402,13 +381,10 @@
             document.querySelector('.clear-list-btn').innerText = "Clearing...";
             let params = new URLSearchParams();
             params.append('action', 'clearPrintData');
-
             let response = await fetch(SCRIPT_URL, { method: 'POST', body: params });
             let text = await response.text();
-            
-            if (text.includes("success")) {
-                alert("Print Sheet හි දත්ත සාර්ථකව මකා දමන ලදි!");
-            } else { alert("දෝෂයක්: " + text); }
+            if (text.includes("success")) { alert("දත්ත සාර්ථකව මකා දමන ලදි!"); } 
+            else { alert("දෝෂයක්: " + text); }
         } catch (err) { alert("Error!: " + err.message); } 
         finally { document.querySelector('.clear-list-btn').innerText = "🗑️ All Delete (Print Data)"; }
     }
@@ -416,15 +392,16 @@
     async function process(actionName) {
         let fields = ['colA','colB','colC','colD','colE','colF','colG','colH','colI','colJ'];
         let params = new URLSearchParams();
-        
         if(actionName === 'searchData') {
             let sId = document.getElementById('searchId').value;
-            if(!sId) { alert("Please enter the receipt number to search!"); return; }
+            if(!sId) { alert("Please enter the receipt number!"); return; }
             params.append('colD', sId);
         } else {
             fields.forEach(f => {
                 let el = document.getElementById(f);
-                params.append(f, el ? el.value : "");
+                let val = el ? el.value : "";
+                if((f==='colE' || f==='colI') && val) val = val.replace(/,/g, '');
+                params.append(f, val);
             });
         }
         params.append('action', actionName);
@@ -440,7 +417,7 @@
                         if((i === 2 || i === 6) && data[i]) { 
                             let dateVal = new Date(data[i]);
                             if (!isNaN(dateVal)) element.value = getLocalDateFormat(dateVal);
-                        } else { element.value = (data[i] !== undefined && data[i] !== null) ? data[i] : ""; }
+                        } else { element.value = (data[i] !== undefined) ? data[i] : ""; }
                     });
                     alert("Data found!");
                 }
@@ -457,4 +434,3 @@
 </script>
 </body>
 </html>
-
